@@ -7,6 +7,7 @@ import xml.etree.ElementTree as etree
 
 from __future__ import print_function
 
+import planning_domains_api as api
 
 langAttribute = "{http://www.w3.org/XML/1998/namespace}lang"
 
