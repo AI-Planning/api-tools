@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import sys
 import os
 
 import xml.etree.ElementTree as etree
-
-from __future__ import print_function
 
 import planning_domains_api as api
 
@@ -59,6 +59,17 @@ def saveSettings():
 
 
 
+def fetchPlanningDomains(domainPath):
+    try:
+        resp = raw_input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
+        if 'y' == resp:
+            os.system("git clone git@bitbucket.org:icaps/domains.git {0}".format(domainPath))
+        else:
+            print("Aborting fetching domains for the directory {0}".format(domainPath))
+    except OSError:
+        print("Cannot make directory {0}".format(domainPath))
+        exit(1)
+
 
 
 def loadSettings(home_dir,pd_dir):
@@ -80,45 +91,29 @@ def loadSettings(home_dir,pd_dir):
             if child.tag == "domain_path":
                 domainPath = child.text
 
-                if isdir(domainPath):
-                    return
-                else:
-                    try:
-                        os.mkdir(domainPath)
-                    except OSError:
-                        print("Error in settings.xml: domains directory {0} does not exist, and cannot be made".format(domainPath))
-                        exit(1)
+                if not os.path.isdir(domainPath):
+                    fetchPlanningDomains(domainPath)
 
-                    print("Warning when reading settings.xml: domains directory {0} did not exist, but it was created".format(domainPath))
-
-                    return
+                return
 
     if installationSettings is None:
         installationSettings = etree.Element("{http://settings.planning.domains}settings")
         installationTree = etree.ElementTree(installationSettings)
 
-    domainPath = input("Enter path for installing files (or hit enter to use {0}): ".format(join(home_dir,"planning.domains")))
+    domainPath = raw_input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
 
     domainPath = domainPath.lstrip()
     domainpath = domainPath.rstrip()
 
     if domainPath == "":
-        domainPath = join(home_dir,"planning.domains")
+        domainPath = os.path.join(home_dir,"planning.domains")
 
     if os.path.isfile(domainPath):
         print("Fatal error: there is already a file called {0}".format(domainPath))
         exit(1)
 
     if not os.path.isdir(domainPath):
-        try:
-            resp = input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
-            if 'y' == resp:
-                os.system("git clone git@bitbucket.org:icaps/domains.git {0}".format(domainPath))
-            else:
-                print("Aborting fetching domains for the directory {0}".format(domainPath))
-        except OSError:
-            print("Cannot make directory {0}".format(domainPath))
-            exit(1)
+        fetchPlanningDomains(domainPath)
 
     etree.SubElement(installationSettings,"domain_path").text = domainPath
 
@@ -143,11 +138,13 @@ if __name__ == "__main__":
 
 
     if len(sys.argv) == 1:
-        print("""No command-line options given.  Usage:
+        print("""
+No command-line options given.  Usage:
 
 planning.domains.py find collection [string]          Find collections whose title/ID contains 'string'
 planning.domains.py find domain [string]              Find domains whose title/ID contains 'string'
-planning.domains.py find problem [string]             Find problems whose title/ID contains 'string'""")
+planning.domains.py find problem [string]             Find problems whose title/ID contains 'string'
+""")
 
         exit(0)
 
