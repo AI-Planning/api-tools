@@ -40,4 +40,20 @@ def get_collection(cid):
     else:
         return res['result']
 
+def get_domains(cid):
+    """Return the set of domains for a given collection id"""
+    res = query("/domains/%d" % cid)
+    if res['error']:
+        print "Error: %s" % data['message']
+        return []
+    else:
+        return res['result']
 
+def get_problems(did):
+    """Return the set of problems for a given domain id"""
+    res = query("/problems/%d" % did)
+    if res['error']:
+        print "Error: %s" % data['message']
+        return []
+    else:
+        return res['result']
