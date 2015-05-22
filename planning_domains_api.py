@@ -31,29 +31,26 @@ def get_collections(ipc = None):
         else:
             return res['result']
 
-def get_collection(cid):
-    """Return the collection of a given id"""
-    res = query("/collection/%d" % cid)
+def simple_query(qs):
+    res = query(qs)
     if res['error']:
         print "Error: %s" % data['message']
         return []
     else:
         return res['result']
+
+def get_collection(cid):
+    """Return the collection of a given id"""
+    return simple_query("/collection/%d" % cid)
 
 def get_domains(cid):
     """Return the set of domains for a given collection id"""
-    res = query("/domains/%d" % cid)
-    if res['error']:
-        print "Error: %s" % data['message']
-        return []
-    else:
-        return res['result']
+    return simple_query("/domains/%d" % cid)
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
-    res = query("/problems/%d" % did)
-    if res['error']:
-        print "Error: %s" % data['message']
-        return []
-    else:
-        return res['result']
+    return simple_query("/problems/%d" % did)
+
+def get_problem(pid):
+    """Return the problem for a given problem id"""
+    return simple_query("/problem/%d" % pid)
