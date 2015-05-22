@@ -4,7 +4,7 @@ import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
 
-DOMAIN_PATH = None
+DOMAIN_PATH = False
 
 def checkForDomainPath():
     """Returns the domain path if one exists and is saved in the settings.xml"""
@@ -86,3 +86,15 @@ def get_problems(did):
 def get_problem(pid):
     """Return the problem for a given problem id"""
     return simple_query("/problem/%d" % pid)
+
+
+def localize(prob):
+    """Convert the server urls to local ones"""
+    assert DOMAIN_PATH, "Error: Your DOMAIN_PATH variable is not set. Have you run planning.domains.py yet?"
+
+    toRet = {k:prob[k] for k in prob}
+
+    toRet['dom_url'] = os.path.join(DOMAIN_PATH, 'classical', prob['dom_url'].split('/classical/')[-1])
+    toRet['prob_url'] = os.path.join(DOMAIN_PATH, 'classical', prob['prob_url'].split('/classical/')[-1])
+
+    return toRet
