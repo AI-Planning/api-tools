@@ -21,7 +21,7 @@ defaultNamespace = "http://settings.planning.domains"
 def checkExists(pd_dir):
     """Check ~/.planning.domains exists, and is not a file"""
 
-    if os.path.isfile("pd_dir"):
+    if os.path.isfile(pd_dir):
         print("Fatal error: need to store settings in {0}, but there is a file with that name".format(pd_dir))
         exit(1)
 
@@ -29,16 +29,21 @@ def checkExists(pd_dir):
     if not os.path.isdir(pd_dir):
 
 
-        print("""== Pre-release client for planning.domains ==
+        print("""
+        == Pre-release client for planning.domains ==
 
-This is pre-release software, for accessing the content on api.planning.domains.
-It is released without warranty (including the implied warranties of merchantability or fitness for a particular purpose).
-Send bug reports to Andrew Coles (andrew.coles@kcl.ac.uk) or Christian Muise (christian.muise@gmail.com)
+ This is pre-release software, for accessing the content on
+ api.planning.domains. It is released without warranty
+ (including the implied warranties of merchantability
+ or fitness for a particular purpose).
+
+ Send bug reports to Andrew Coles (andrew.coles@kcl.ac.uk)
+ or Christian Muise (christian.muise@gmail.com)
 
 """)
 
 
-        print("Making directory {0}".format(pd_dir))
+        print("Making directory {0}...\n".format(pd_dir))
         try:
             os.mkdir(pd_dir)
 

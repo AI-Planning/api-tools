@@ -1,7 +1,39 @@
 
 import httplib, urllib, json, os, re
+import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
+
+DOMAIN_PATH = None
+
+def checkForDomainPath():
+    """Returns the domain path if one exists and is saved in the settings.xml"""
+
+    home_dir = os.path.expanduser("~")
+    pd_dir = os.path.join(home_dir,".planning.domains")
+    settingsXML = os.path.join(pd_dir,"settings.xml")
+
+    if not os.path.isdir(pd_dir) or not os.path.isfile(settingsXML):
+        return False
+
+    installationTree = etree.parse(settingsXML)
+    if installationTree is None:
+        return False
+
+    installationSettings = installationTree.getroot()
+    if installationSettings is None:
+        return False
+
+    domainPath = filter(lambda x: x.tag == 'domain_path', installationSettings)[0].text
+    if not os.path.isdir(domainPath):
+        return False
+
+    global DOMAIN_PATH
+    DOMAIN_PATH = domainPath
+    return True
+
+if not checkForDomainPath():
+    print "\n Warning: No domain path is set\n"
 
 def query(qs, offline=False):
 
