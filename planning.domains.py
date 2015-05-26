@@ -68,7 +68,7 @@ def fetchPlanningDomains(domainPath):
     try:
         resp = raw_input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
         if 'y' == resp:
-            os.system("git clone git@bitbucket.org:icaps/domains.git {0}".format(domainPath))
+            os.system("git clone git@bitbucket.org:pddl-tools/domains.git {0}".format(domainPath))
         else:
             print("Aborting fetching domains for the directory {0}".format(domainPath))
     except OSError:
