@@ -54,7 +54,7 @@ def query(qs, offline=False):
 def simple_query(qs):
     res = query(qs)
     if res['error']:
-        print "Error: %s" % data['message']
+        print "Error: %s" % res['message']
         return []
     else:
         return res['result']
@@ -64,7 +64,7 @@ def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
     res = query('/collections/')
     if res['error']:
-        print "Error: %s" % data['message']
+        print "Error: %s" % res['message']
         return []
     else:
         if ipc is not None:
