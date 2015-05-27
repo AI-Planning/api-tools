@@ -76,6 +76,10 @@ def get_collection(cid):
     """Return the collection of a given id"""
     return simple_query("/collection/%d" % cid)
 
+def find_collection(name):
+    """Find the collections matching the string name"""
+    return simple_query("/collections/search?name=%s" % name)
+
 
 def get_domains(cid):
     """Return the set of domains for a given collection id"""
@@ -85,6 +89,10 @@ def get_domain(did):
     """Return the domain for a given domain id"""
     return simple_query("/domain/%d" % did)
 
+def find_domains(name):
+    """Return the domains matching the string name"""
+    return simple_query("/domains/search?name=%s" % name)
+
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
@@ -93,6 +101,10 @@ def get_problems(did):
 def get_problem(pid):
     """Return the problem for a given problem id"""
     return simple_query("/problem/%d" % pid)
+
+def find_problems(name):
+    """Return the problems matching the string name"""
+    return simple_query("/problems/search?problem_name=%s" % name)
 
 
 def localize(prob):

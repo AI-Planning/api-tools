@@ -21,9 +21,9 @@ No command-line options given.  Usage:
 
 planning.domains.py update                            Update the local domain repository.
 
-planning.domains.py find collection [string]          Find collections whose title/ID contains 'string'
-planning.domains.py find domain [string]              Find domains whose title/ID contains 'string'
-planning.domains.py find problem [string]             Find problems whose title/ID contains 'string'
+planning.domains.py find collections [string]          Find collections whose title/ID contains 'string'
+planning.domains.py find domains [string]              Find domains whose title/ID contains 'string'
+planning.domains.py find problems [string]             Find problems whose title/ID contains 'string'
 
 planning.domains.py show collection [integer]         Find collections whose title/ID contains 'integer'
 planning.domains.py show domain [integer]             Find domains whose title/ID contains 'integer'
@@ -141,12 +141,12 @@ def loadSettings(home_dir,pd_dir):
 def find(sub, arg):
     """Find an object of type sub that matches argument arg."""
 
-    if sub == 'collection':
-        res = api.find_collection(arg)
-    elif sub == 'domain':
-        res = api.find_domain(arg)
-    elif sub == 'problem':
-        res = api.find_problem(arg)
+    if sub == 'collections':
+        res = api.find_collections(arg)
+    elif sub == 'domains':
+        res = api.find_domains(arg)
+    elif sub == 'problems':
+        res = api.find_problems(arg)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
