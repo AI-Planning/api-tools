@@ -51,6 +51,15 @@ def query(qs, offline=False):
 
     return data
 
+def simple_query(qs):
+    res = query(qs)
+    if res['error']:
+        print "Error: %s" % data['message']
+        return []
+    else:
+        return res['result']
+
+
 def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
     res = query('/collections/')
@@ -63,21 +72,19 @@ def get_collections(ipc = None):
         else:
             return res['result']
 
-def simple_query(qs):
-    res = query(qs)
-    if res['error']:
-        print "Error: %s" % data['message']
-        return []
-    else:
-        return res['result']
-
 def get_collection(cid):
     """Return the collection of a given id"""
     return simple_query("/collection/%d" % cid)
 
+
 def get_domains(cid):
     """Return the set of domains for a given collection id"""
     return simple_query("/domains/%d" % cid)
+
+def get_domain(did):
+    """Return the domain for a given domain id"""
+    return simple_query("/domain/%d" % did)
+
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
