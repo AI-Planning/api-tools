@@ -17,6 +17,16 @@ installationTree = None
 
 defaultNamespace = "http://settings.planning.domains"
 
+USAGE_STRING = """
+No command-line options given.  Usage:
+
+planning.domains.py update                            Update the local domain repository.
+
+planning.domains.py find collection [string]          Find collections whose title/ID contains 'string'
+planning.domains.py find domain [string]              Find domains whose title/ID contains 'string'
+planning.domains.py find problem [string]             Find problems whose title/ID contains 'string'
+"""
+
 
 def checkExists(pd_dir):
     """Check ~/.planning.domains exists, and is not a file"""
@@ -143,14 +153,7 @@ if __name__ == "__main__":
 
 
     if len(sys.argv) == 1:
-        print("""
-No command-line options given.  Usage:
-
-planning.domains.py find collection [string]          Find collections whose title/ID contains 'string'
-planning.domains.py find domain [string]              Find domains whose title/ID contains 'string'
-planning.domains.py find problem [string]             Find problems whose title/ID contains 'string'
-""")
-
+        print(USAGE_STRING)
         exit(0)
 
 
@@ -160,18 +163,12 @@ planning.domains.py find problem [string]             Find problems whose title/
 
     while i < len(sys.argv):
         if sys.argv[i] == "update":
-            if downloadedPackageList:
-                print("Already downloaded package list")
+            if api.checkForDomainPath():
+                print("Updating...")
+                os.system("cd {0}; git pull -u".format(api.DOMAIN_PATH))
             else:
-                print("Downloading package list")
-                update(packageList)
-                downloadedPackageList = True
+                print("Error: Domain path is not set.")
 
-            i += 1
-
-        elif sys.argv[i] == "upgrade":
-
-            upgrade(packageList,pd_dir)
             i += 1
 
         else:
