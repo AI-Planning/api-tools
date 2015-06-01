@@ -27,13 +27,13 @@ function val(v) {
 function format_problems(data, heads, select_func) {
     if (typeof heads === 'undefined')
         heads = default_problem_headings;
-    return format_table(data.sort(function(a,b){return a.prob_name - b.prob_name}), heads, select_func);
+    return format_table(data.sort(function(a,b){return a.prob_name.localeCompare(b.prob_name)}), heads, select_func);
 }
 
 function format_domains(data, heads, select_func) {
     if (typeof heads === 'undefined')
         heads = default_domain_headings;
-    return format_table(data.sort(function(a,b){return a.dom_name - b.dom_name}), heads, select_func);
+    return format_table(data.sort(function(a,b){return a.dom_name.localeCompare(b.dom_name)}), heads, select_func);
 }
 
 function format_collections(data, heads, select_func) {
