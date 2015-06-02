@@ -111,7 +111,7 @@ function fetch_collections(qs, parent, select_func) {
 function _navigator_dom2prob(did) {
     window.nav_prev_step = _navigator_col2dom;
     $('#nav-back-button').show();
-    $(window.nav_parent).html('Loading...');
+    $(window.nav_parent).html('<div id="loading-text">Loading...</div>');
     fetch_problems('/problems/'+did, window.nav_parent, window.nav_func);
 }
 
@@ -119,13 +119,13 @@ function _navigator_col2dom(cid) {
     window.nav_prev_step = _navigator_cols;
     window.nav_prev_setting = cid;
     $('#nav-back-button').show();
-    $(window.nav_parent).html('Loading...');
+    $(window.nav_parent).html('<div id="loading-text">Loading...</div>');
     fetch_domains('/domains/'+cid, window.nav_parent, '_navigator_dom2prob');
 }
 
 function _navigator_cols() {
     $('#nav-back-button').hide();
-    $(window.nav_parent).html('Loading...');
+    $(window.nav_parent).html('<div id="loading-text">Loading...</div>');
     fetch_collections('/collections', window.nav_parent, '_navigator_col2dom');
 }
 
