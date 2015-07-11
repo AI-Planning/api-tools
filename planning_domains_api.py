@@ -3,6 +3,7 @@ import httplib, urllib, json, os, re
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
+VERSION = '0.1'
 
 DOMAIN_PATH = False
 
@@ -32,9 +33,6 @@ def checkForDomainPath():
     DOMAIN_PATH = domainPath
     return True
 
-if not checkForDomainPath():
-    print "\n Warning: No domain path is set\n"
-
 def query(qs, offline=False):
 
     assert not offline, "Error: Offline mode is not supported currently."
@@ -59,6 +57,9 @@ def simple_query(qs):
     else:
         return res['result']
 
+def get_version():
+    """Return the current API version"""
+    return str(query('/version')['version'])
 
 def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
@@ -96,24 +97,35 @@ def find_domains(name):
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
-    return simple_query("/problems/%d" % did)
+    return map(localize, simple_query("/problems/%d" % did))
 
 def get_problem(pid):
     """Return the problem for a given problem id"""
-    return simple_query("/problem/%d" % pid)
+    return localize(simple_query("/problem/%d" % pid))
 
 def find_problems(name):
     """Return the problems matching the string name"""
-    return simple_query("/problems/search?problem_name=%s" % name)
+    return map(localize, simple_query("/problems/search?problem_name=%s" % name))
 
 
 def localize(prob):
-    """Convert the server urls to local ones"""
-    assert DOMAIN_PATH, "Error: Your DOMAIN_PATH variable is not set. Have you run planning.domains.py yet?"
+    """Convert the relative paths to local ones"""
+    if not DOMAIN_PATH:
+        return prob
 
     toRet = {k:prob[k] for k in prob}
 
-    toRet['dom_url'] = os.path.join(DOMAIN_PATH, 'classical', prob['dom_url'].split('/classical/')[-1])
-    toRet['prob_url'] = os.path.join(DOMAIN_PATH, 'classical', prob['prob_url'].split('/classical/')[-1])
+    toRet['domain_path'] = os.path.join(DOMAIN_PATH, prob['domain_path'])
+    toRet['problem_path'] = os.path.join(DOMAIN_PATH, prob['problem_path'])
 
     return toRet
+
+
+if not checkForDomainPath():
+    print "\n Warning: No domain path is set\n"
+
+try:
+    if VERSION != get_version():
+        print "\n Warning: Script version doesn't match API. Do you have the latest version of this file?\n"
+except:
+    pass
