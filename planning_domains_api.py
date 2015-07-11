@@ -33,14 +33,14 @@ def checkForDomainPath():
     DOMAIN_PATH = domainPath
     return True
 
-def query(qs, offline=False):
+def query(qs, offline=False, format='json'):
 
     assert not offline, "Error: Offline mode is not supported currently."
 
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
     params = urllib.urlencode({})
-    conn = httplib.HTTPConnection(URL)
+    conn = httplib.HTTPConnection("%s/%s/classical" % (URL, format))
     conn.request("GET", qs, params, headers)
     response = conn.getresponse()
 

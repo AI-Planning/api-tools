@@ -1,21 +1,21 @@
 
 var headings = {'id': 'ID',
-                'prob_name': 'Problem',
+                'problem': 'Problem',
                 'lower_bound': 'Lower Bound',
                 'upper_bound': 'Upper Bound',
-                'effective_width': 'Width',
+                'max_effective_width': 'Max Width',
                 'hplus': 'H-Plus',
-                'dom_name': 'Domain',
+                'domain': 'Domain',
+                'domain_name': 'Domain',
                 'description': 'Description',
-                'requirements': 'Requirements',
+                'tags': 'Tags',
                 'name': 'Collection',
-                'domain_set': 'Domain Set',
-                'ipc': 'IPC'
+                'domain_set': 'Domain Set'
 };
 
-var default_problem_headings = ['id','prob_name','lower_bound','upper_bound'];
-var default_domain_headings = ['id', 'dom_name', 'requirements', 'description'];
-var default_collection_headings = ['id', 'name', 'ipc', 'description'];
+var default_problem_headings = ['id','problem','lower_bound','upper_bound'];
+var default_domain_headings = ['id', 'domain_name', 'tags', 'description'];
+var default_collection_headings = ['id', 'name', 'description'];
 
 function val(v) {
     if (v == null)
@@ -76,7 +76,7 @@ function format_table(data, heads, select_func) {
 
 
 function fetch_problems(qs, parent, select_func) {
-    $.getJSON('http://api.planning.domains'+qs, function(data) {
+    $.getJSON('http://api.planning.domains/json/classical'+qs, function(data) {
         if (data.error)
             $(parent).html('Error:' + data.message);
         else
@@ -87,7 +87,7 @@ function fetch_problems(qs, parent, select_func) {
 }
 
 function fetch_domains(qs, parent, select_func) {
-    $.getJSON('http://api.planning.domains'+qs, function(data) {
+    $.getJSON('http://api.planning.domains/json/classical'+qs, function(data) {
         if (data.error)
             $(parent).html('Error:' + data.message);
         else
@@ -98,7 +98,7 @@ function fetch_domains(qs, parent, select_func) {
 }
 
 function fetch_collections(qs, parent, select_func) {
-    $.getJSON('http://api.planning.domains'+qs, function(data) {
+    $.getJSON('http://api.planning.domains/json/classical'+qs, function(data) {
         if (data.error)
             $(parent).html('Error:' + data.message);
         else
