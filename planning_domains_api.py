@@ -77,7 +77,7 @@ def get_collection(cid):
     """Return the collection of a given id"""
     return simple_query("/collection/%d" % cid)
 
-def find_collection(name):
+def find_collections(name):
     """Find the collections matching the string name"""
     return simple_query("/collections/search?name=%s" % name)
 
