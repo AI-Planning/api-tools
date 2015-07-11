@@ -40,8 +40,8 @@ def query(qs, offline=False, format='json'):
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
     params = urllib.urlencode({})
-    conn = httplib.HTTPConnection("%s/%s/classical" % (URL, format))
-    conn.request("GET", qs, params, headers)
+    conn = httplib.HTTPConnection(URL)
+    conn.request("GET", "/%s/classical%s" % (format, qs), params, headers)
     response = conn.getresponse()
 
     data = json.loads(response.read())
