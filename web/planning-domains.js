@@ -5,11 +5,13 @@ var VERSION = 0.1;
 setTimeout(function(){
     $.getJSON('http://api.planning.domains/json/version', function(data) {
         if (VERSION != data.version)
-            alert('Warning: Your javascript API library appears to be outdated!\n\nPlease download the latest version.');
+            alert('Warning: Your javascript API library appears to be outdated! Please download the latest version.');
     });
 }, 1000);
 
-var headings = {'id': 'ID',
+var headings = {'problem_id': 'ID',
+                'domain_id': 'ID',
+                'collection_id': 'ID',
                 'problem': 'Problem',
                 'lower_bound': 'Lower Bound',
                 'upper_bound': 'Upper Bound',
@@ -19,13 +21,12 @@ var headings = {'id': 'ID',
                 'domain_name': 'Domain',
                 'description': 'Description',
                 'tags': 'Tags',
-                'name': 'Collection',
                 'domain_set': 'Domain Set'
 };
 
-var default_problem_headings = ['id','problem','lower_bound','upper_bound'];
-var default_domain_headings = ['id', 'domain_name', 'tags', 'description'];
-var default_collection_headings = ['id', 'name', 'description'];
+var default_problem_headings = ['problem_id','problem','lower_bound','upper_bound'];
+var default_domain_headings = ['domain_id', 'domain_name', 'tags', 'description'];
+var default_collection_headings = ['collection_id', 'collection_name', 'description'];
 
 function val(v) {
     if (v == null)
@@ -37,19 +38,19 @@ function val(v) {
 function format_problems(data, heads, select_func) {
     if (typeof heads === 'undefined')
         heads = default_problem_headings;
-    return format_table(data.sort(function(a,b){return a.prob_name.localeCompare(b.prob_name)}), heads, select_func);
+    return format_table(data.sort(function(a,b){return a.problem_name.localeCompare(b.problem_name)}), heads, select_func);
 }
 
 function format_domains(data, heads, select_func) {
     if (typeof heads === 'undefined')
         heads = default_domain_headings;
-    return format_table(data.sort(function(a,b){return a.dom_name.localeCompare(b.dom_name)}), heads, select_func);
+    return format_table(data.sort(function(a,b){return a.domain_name.localeCompare(b.domain_name)}), heads, select_func);
 }
 
 function format_collections(data, heads, select_func) {
     if (typeof heads == 'undefined')
         heads = default_collection_headings;
-    return format_table(data.sort(function(a,b){return a.id - b.id}), heads, select_func);
+    return format_table(data.sort(function(a,b){return a.collection_id - b.collection_id}), heads, select_func);
 }
 
 function format_table(data, heads, select_func) {
@@ -69,7 +70,7 @@ function format_table(data, heads, select_func) {
         if (typeof select_func === 'undefined')
             html += '<tr>';
         else
-            html += '<tr style="cursor:pointer" onclick="'+select_func+'('+data[i].id+')">';
+            html += '<tr style="cursor:pointer" onclick="'+select_func+'('+data[i][heads[0]]+')">';
 
         for (j = 0; j < heads.length; j++) {
             html += '<td>' + val(data[i][heads[j]]) + '</td>';
