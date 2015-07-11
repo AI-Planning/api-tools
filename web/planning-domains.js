@@ -1,4 +1,14 @@
 
+var VERSION = 0.1;
+
+// Delay the version check just so we can be sure jquery is loaded
+setTimeout(function(){
+    $.getJSON('http://api.planning.domains/json/version', function(data) {
+        if (VERSION != data.version)
+            alert('Warning: Your javascript API library appears to be outdated!\n\nPlease download the latest version.');
+    });
+}, 1000);
+
 var headings = {'id': 'ID',
                 'problem': 'Problem',
                 'lower_bound': 'Lower Bound',
