@@ -33,7 +33,7 @@ def checkForDomainPath():
     DOMAIN_PATH = domainPath
     return True
 
-def query(qs, offline=False, format='json'):
+def query(qs, offline=False, format='/json'):
 
     assert not offline, "Error: Offline mode is not supported currently."
 
@@ -41,7 +41,7 @@ def query(qs, offline=False, format='json'):
 
     params = urllib.urlencode({})
     conn = httplib.HTTPConnection(URL)
-    conn.request("GET", "/%s/classical%s" % (format, qs), params, headers)
+    conn.request("GET", format+qs, params, headers)
     response = conn.getresponse()
 
     data = json.loads(response.read())
@@ -63,7 +63,7 @@ def get_version():
 
 def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
-    res = query('/collections/')
+    res = query('/classical/collections/')
     if res['error']:
         print "Error: %s" % res['message']
         return []
@@ -75,37 +75,37 @@ def get_collections(ipc = None):
 
 def get_collection(cid):
     """Return the collection of a given id"""
-    return simple_query("/collection/%d" % cid)
+    return simple_query("/classical/collection/%d" % cid)
 
 def find_collections(name):
     """Find the collections matching the string name"""
-    return simple_query("/collections/search?name=%s" % name)
+    return simple_query("/classical/collections/search?name=%s" % name)
 
 
 def get_domains(cid):
     """Return the set of domains for a given collection id"""
-    return simple_query("/domains/%d" % cid)
+    return simple_query("/classical/domains/%d" % cid)
 
 def get_domain(did):
     """Return the domain for a given domain id"""
-    return simple_query("/domain/%d" % did)
+    return simple_query("/classical/domain/%d" % did)
 
 def find_domains(name):
     """Return the domains matching the string name"""
-    return simple_query("/domains/search?name=%s" % name)
+    return simple_query("/classical/domains/search?name=%s" % name)
 
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
-    return map(localize, simple_query("/problems/%d" % did))
+    return map(localize, simple_query("/classical/problems/%d" % did))
 
 def get_problem(pid):
     """Return the problem for a given problem id"""
-    return localize(simple_query("/problem/%d" % pid))
+    return localize(simple_query("/classical/problem/%d" % pid))
 
 def find_problems(name):
     """Return the problems matching the string name"""
-    return map(localize, simple_query("/problems/search?problem_name=%s" % name))
+    return map(localize, simple_query("/classical/problems/search?problem_name=%s" % name))
 
 
 def localize(prob):
