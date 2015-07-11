@@ -38,7 +38,7 @@ function val(v) {
 function format_problems(data, heads, select_func) {
     if (typeof heads === 'undefined')
         heads = default_problem_headings;
-    return format_table(data.sort(function(a,b){return a.problem_name.localeCompare(b.problem_name)}), heads, select_func);
+    return format_table(data.sort(function(a,b){return a.problem.localeCompare(b.problem)}), heads, select_func);
 }
 
 function format_domains(data, heads, select_func) {
