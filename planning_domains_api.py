@@ -107,6 +107,14 @@ def find_problems(name):
     """Return the problems matching the string name"""
     return map(localize, simple_query("/classical/problems/search?problem_name=%s" % name))
 
+def get_plan(pid):
+    """Return the existing plan for a problem if it exists"""
+    plan = simple_query("/classical/plan/%d" % pid)['plan'].strip()
+    if plan:
+        return map(str, plan.split('|'))
+    else:
+        return None
+
 
 def localize(prob):
     """Convert the relative paths to local ones"""

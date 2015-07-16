@@ -21,13 +21,14 @@ No command-line options given.  Usage:
 
 planning.domains.py update                            Update the local domain repository.
 
-planning.domains.py find collections [string]          Find collections whose title/ID contains 'string'
-planning.domains.py find domains [string]              Find domains whose title/ID contains 'string'
-planning.domains.py find problems [string]             Find problems whose title/ID contains 'string'
+planning.domains.py find collections [string]         Find collections whose title/ID contains 'string'
+planning.domains.py find domains [string]             Find domains whose title/ID contains 'string'
+planning.domains.py find problems [string]            Find problems whose title/ID contains 'string'
 
 planning.domains.py show collection [integer]         Find collections whose title/ID contains 'integer'
 planning.domains.py show domain [integer]             Find domains whose title/ID contains 'integer'
 planning.domains.py show problem [integer]            Find problems whose title/ID contains 'integer'
+planning.domains.py show plan [integer]               Show the plan (if any) matching the given problem ID
 """
 
 
@@ -164,6 +165,8 @@ def show(sub, arg):
         res = api.get_domain(arg)
     elif sub == 'problem':
         res = api.get_problem(arg)
+    elif sub == 'plan':
+        res = api.get_plan(arg)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
