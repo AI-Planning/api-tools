@@ -3,9 +3,11 @@ import httplib, urllib, json, os, re
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
-VERSION = '0.1'
+VERSION = '0.2'
 
 DOMAIN_PATH = False
+USER_EMAIL = False
+USER_TOKEN = False
 
 def checkForDomainPath():
     """Returns the domain path if one exists and is saved in the settings.xml"""
@@ -30,7 +32,13 @@ def checkForDomainPath():
         return False
 
     global DOMAIN_PATH
+    global USER_EMAIL
+    global USER_TOKEN
     DOMAIN_PATH = domainPath
+    if 'email' in [x.tag for x in installationSettings]:
+        USER_EMAIL = filter(lambda x: x.tag == 'email', installationSettings)[0].text
+    if 'token' in [x.tag for x in installationSettings]:
+        USER_TOKEN = filter(lambda x: x.tag == 'token', installationSettings)[0].text
     return True
 
 def query(qs, offline=False, format='/json'):

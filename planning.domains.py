@@ -13,6 +13,8 @@ langAttribute = "{http://www.w3.org/XML/1998/namespace}lang"
 domainPath = None
 installationSettings = None
 installationTree = None
+userEmail = None
+userToken = None
 
 defaultNamespace = "http://settings.planning.domains"
 
@@ -20,6 +22,8 @@ USAGE_STRING = """
 No command-line options given.  Usage:
 
 planning.domains.py update                            Update the local domain repository.
+
+planning.domains.py register                          Register your email and token for making API edits
 
 planning.domains.py find collections [string]         Find collections whose title/ID contains 'string'
 planning.domains.py find domains [string]             Find domains whose title/ID contains 'string'
@@ -101,6 +105,8 @@ def loadSettings(home_dir,pd_dir):
     global installationTree
     global installationSettings
     global domainPath
+    global userEmail
+    global userToken
 
     if os.path.isfile(settingsXML):
         installationTree = etree.parse(settingsXML)
@@ -113,7 +119,13 @@ def loadSettings(home_dir,pd_dir):
                 if not os.path.isdir(domainPath):
                     fetchPlanningDomains(domainPath)
 
-                return
+            if child.tag == "email":
+                userEmail = child.text
+
+            if child.tag == "token":
+                userToken = child.text
+
+        return
 
     if installationSettings is None:
         installationSettings = etree.Element("{http://settings.planning.domains}settings")
@@ -136,7 +148,28 @@ def loadSettings(home_dir,pd_dir):
 
     etree.SubElement(installationSettings,"domain_path").text = domainPath
 
+    userEmail = raw_input("Enter email for API updates: ")
+    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
+
+    etree.SubElement(installationSettings,"email").text = userEmail
+    etree.SubElement(installationSettings,"token").text = userToken
+
     saveSettings()
+
+
+def register():
+    global userEmail
+    global userToken
+
+    userEmail = raw_input("Enter email for API updates: ")
+    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
+
+    filter(lambda x: x.tag == 'email', installationSettings)[0].text = userEmail
+    filter(lambda x: x.tag == 'token', installationSettings)[0].text = userToken
+
+    saveSettings()
+
+    print("New email and token settings saved!\n")
 
 
 def find(sub, arg):
@@ -206,6 +239,10 @@ if __name__ == "__main__":
             else:
                 print("Error: Domain path is not set.")
 
+            i += 1
+
+        elif sys.argv[i] == 'register':
+            register()
             i += 1
 
         else:
