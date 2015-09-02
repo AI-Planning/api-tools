@@ -57,6 +57,24 @@ def query(qs, offline=False, format='/json'):
 
     return data
 
+def update_stat(stat_type, iid, attribute, value, description):
+    params = urllib.urlencode({'user': USER_EMAIL,
+                               'password': USER_TOKEN,
+                               'key': attribute,
+                               'value': value,
+                               'desc': description})
+    conn = httplib.HTTPConnection(URL)
+    conn.request("POST", "/update%s/%d" % (stat_type, iid), params, headers)
+    response = conn.getresponse()
+
+    data = json.loads(response.read())
+    conn.close()
+
+    if res['error']:
+        print "Error: %s" % res['message']
+    else:
+        print "Result: %s" % str(data)
+
 def simple_query(qs):
     res = query(qs)
     if res['error']:
@@ -68,6 +86,7 @@ def simple_query(qs):
 def get_version():
     """Return the current API version"""
     return str(query('/version')['version'])
+
 
 def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
@@ -89,6 +108,10 @@ def find_collections(name):
     """Find the collections matching the string name"""
     return simple_query("/classical/collections/search?name=%s" % name)
 
+def update_collection_stat(cid, attribute, value, description):
+    """Update the attribute stat with a given value and description"""
+    update_stat('collection', cid, attribute, value, description)
+
 
 def get_domains(cid):
     """Return the set of domains for a given collection id"""
@@ -102,6 +125,10 @@ def find_domains(name):
     """Return the domains matching the string name"""
     return simple_query("/classical/domains/search?name=%s" % name)
 
+def update_domain_stat(did, attribute, value, description):
+    """Update the attribute stat with a given value and description"""
+    update_stat('domain', did, attribute, value, description)
+
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
@@ -114,6 +141,10 @@ def get_problem(pid):
 def find_problems(name):
     """Return the problems matching the string name"""
     return map(localize, simple_query("/classical/problems/search?problem_name=%s" % name))
+
+def update_problem_stat(pid, attribute, value, description):
+    """Update the attribute stat with a given value and description"""
+    update_stat('problem', pid, attribute, value, description)
 
 def get_plan(pid):
     """Return the existing plan for a problem if it exists"""

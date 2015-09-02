@@ -33,6 +33,8 @@ planning.domains.py show collection [integer]         Find collections whose tit
 planning.domains.py show domain [integer]             Find domains whose title/ID contains 'integer'
 planning.domains.py show problem [integer]            Find problems whose title/ID contains 'integer'
 planning.domains.py show plan [integer]               Show the plan (if any) matching the given problem ID
+
+planning.domains.py submit plan [plan file]           Submit the provided plan for validation and possible storage
 """
 
 
