@@ -58,22 +58,26 @@ def query(qs, offline=False, format='/json'):
     return data
 
 def update_stat(stat_type, iid, attribute, value, description):
+
+    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+
     params = urllib.urlencode({'user': USER_EMAIL,
                                'password': USER_TOKEN,
                                'key': attribute,
                                'value': value,
                                'desc': description})
+
     conn = httplib.HTTPConnection(URL)
-    conn.request("POST", "/update%s/%d" % (stat_type, iid), params, headers)
+    conn.request("POST", "/classical/update%s/%d" % (stat_type, iid), params, headers)
     response = conn.getresponse()
 
-    data = json.loads(response.read())
+    res = json.loads(response.read())
     conn.close()
 
     if res['error']:
         print "Error: %s" % res['message']
     else:
-        print "Result: %s" % str(data)
+        print "Result: %s" % str(res)
 
 def simple_query(qs):
     res = query(qs)
