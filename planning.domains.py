@@ -163,15 +163,15 @@ def register():
     global userEmail
     global userToken
 
-    userEmail = raw_input("Enter email for API updates: ")
-    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
+    userEmail = raw_input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
+    userToken = raw_input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
 
     filter(lambda x: x.tag == 'email', installationSettings)[0].text = userEmail
     filter(lambda x: x.tag == 'token', installationSettings)[0].text = userToken
 
     saveSettings()
 
-    print("New email and token settings saved!\n")
+    print("Email and token settings saved!\n")
 
 
 def find(sub, arg):
