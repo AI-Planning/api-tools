@@ -41,15 +41,15 @@ def checkForDomainPath():
         USER_TOKEN = filter(lambda x: x.tag == 'token', installationSettings)[0].text
     return True
 
-def query(qs, offline=False, format='/json'):
+def query(qs, qtype="GET", params={}, offline=False, format='/json'):
 
     assert not offline, "Error: Offline mode is not supported currently."
 
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
-    params = urllib.urlencode({})
+    params = urllib.urlencode(params)
     conn = httplib.HTTPConnection(URL)
-    conn.request("GET", format+qs, params, headers)
+    conn.request(qtype, format+qs, params, headers)
     response = conn.getresponse()
 
     data = json.loads(response.read())
@@ -59,20 +59,17 @@ def query(qs, offline=False, format='/json'):
 
 def update_stat(stat_type, iid, attribute, value, description):
 
-    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+    params = {'user': USER_EMAIL,
+              'password': USER_TOKEN,
+              'key': attribute,
+              'value': value,
+              'desc': description}
 
-    params = urllib.urlencode({'user': USER_EMAIL,
-                               'password': USER_TOKEN,
-                               'key': attribute,
-                               'value': value,
-                               'desc': description})
-
-    conn = httplib.HTTPConnection(URL)
-    conn.request("POST", "/classical/update%s/%d" % (stat_type, iid), params, headers)
-    response = conn.getresponse()
-
-    res = json.loads(response.read())
-    conn.close()
+    res = query("/classical/update%s/%d" % (stat_type, iid),
+                qtype='POST',
+                params=params,
+                offline=False,
+                format='')
 
     if res['error']:
         print "Error: %s" % res['message']
@@ -157,6 +154,22 @@ def get_plan(pid):
         return map(str, plan.split('|'))
     else:
         return None
+
+def submit_plan(pid, plan):
+    """Submit the provided plan for validation and possible storage"""
+
+    params = {'plan': plan}
+
+    res = query("/classical/submitplan/%d" % pid,
+                qtype='POST',
+                params=params,
+                offline=False,
+                format='')
+
+    if res['error']:
+        print "Error: %s" % res['message']
+    else:
+        print "Result: %s" % str(res)
 
 
 def localize(prob):

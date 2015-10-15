@@ -21,20 +21,20 @@ defaultNamespace = "http://settings.planning.domains"
 USAGE_STRING = """
 No command-line options given.  Usage:
 
-planning.domains.py update                            Update the local domain repository.
+planning.domains.py update                              Update the local domain repository.
 
-planning.domains.py register                          Register your email and token for making API edits
+planning.domains.py register                            Register your email and token for making API edits
 
-planning.domains.py find collections [string]         Find collections whose title/ID contains 'string'
-planning.domains.py find domains [string]             Find domains whose title/ID contains 'string'
-planning.domains.py find problems [string]            Find problems whose title/ID contains 'string'
+planning.domains.py find collections [string]           Find collections whose title/ID contains 'string'
+planning.domains.py find domains [string]               Find domains whose title/ID contains 'string'
+planning.domains.py find problems [string]              Find problems whose title/ID contains 'string'
 
-planning.domains.py show collection [integer]         Find collections whose title/ID contains 'integer'
-planning.domains.py show domain [integer]             Find domains whose title/ID contains 'integer'
-planning.domains.py show problem [integer]            Find problems whose title/ID contains 'integer'
-planning.domains.py show plan [integer]               Show the plan (if any) matching the given problem ID
+planning.domains.py show collection [integer]           Find collections whose title/ID contains 'integer'
+planning.domains.py show domain [integer]               Find domains whose title/ID contains 'integer'
+planning.domains.py show problem [integer]              Find problems whose title/ID contains 'integer'
+planning.domains.py show plan [integer]                 Show the plan (if any) matching the given problem ID
 
-planning.domains.py submit plan [plan file]           Submit the provided plan for validation and possible storage
+planning.domains.py submit plan [integer] [plan file]   Submit the provided plan for validation and possible storage
 """
 
 
@@ -208,6 +208,10 @@ def show(sub, arg):
 
     pprint.pprint(res)
 
+def submit_plan(pid, pfile):
+    with open(pfile) as f:
+        plan = f.read()
+    api.submit_plan(pid, plan)
 
 if __name__ == "__main__":
 
@@ -246,6 +250,24 @@ if __name__ == "__main__":
         elif sys.argv[i] == 'register':
             register()
             i += 1
+
+        elif sys.argv[i] == 'submit':
+            i += 1
+
+            sub = sys.argv[i].strip()
+            i += 1
+
+            if sub == 'plan':
+
+                pid = int(sys.argv[i].strip())
+                i += 1
+
+                pfile = sys.argv[i].strip()
+                i += 1
+
+                submit_plan(pid, pfile)
+            else:
+                print("Error: unknown submission type {0}".format(sub))
 
         else:
 
