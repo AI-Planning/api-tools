@@ -158,7 +158,7 @@ def get_plan(pid):
 def submit_plan(pid, plan):
     """Submit the provided plan for validation and possible storage"""
 
-    params = {'plan': plan}
+    params = {'plan': plan, 'email': USER_EMAIL}
 
     res = query("/classical/submitplan/%d" % pid,
                 qtype='POST',
