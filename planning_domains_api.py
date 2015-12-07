@@ -151,7 +151,7 @@ def get_plan(pid):
     """Return the existing plan for a problem if it exists"""
     plan = simple_query("/classical/plan/%d" % pid)['plan'].strip()
     if plan:
-        return map(str, plan.split('|'))
+        return map(str, plan.split('\n'))
     else:
         return None
 
