@@ -21,20 +21,26 @@ defaultNamespace = "http://settings.planning.domains"
 USAGE_STRING = """
 No command-line options given.  Usage:
 
-planning.domains.py update                              Update the local domain repository.
+planning.domains.py update                                Update the local domain repository.
 
-planning.domains.py register                            Register your email and token for making API edits
+planning.domains.py register                              Register your email and token for making API edits
 
-planning.domains.py find collections [string]           Find collections whose title/ID contains 'string'
-planning.domains.py find domains [string]               Find domains whose title/ID contains 'string'
-planning.domains.py find problems [string]              Find problems whose title/ID contains 'string'
+planning.domains.py find collections [string]             Find collections whose title/ID contains 'string'
+planning.domains.py find domains [string]                 Find domains whose title/ID contains 'string'
+planning.domains.py find problems [string]                Find problems whose title/ID contains 'string'
 
-planning.domains.py show collection [integer]           Find collections whose title/ID contains 'integer'
-planning.domains.py show domain [integer]               Find domains whose title/ID contains 'integer'
-planning.domains.py show problem [integer]              Find problems whose title/ID contains 'integer'
-planning.domains.py show plan [integer]                 Show the plan (if any) matching the given problem ID
+planning.domains.py show collection [integer]             Find collections whose title/ID contains 'integer'
+planning.domains.py show domain [integer]                 Find domains whose title/ID contains 'integer'
+planning.domains.py show problem [integer]                Find problems whose title/ID contains 'integer'
+planning.domains.py show plan [integer]                   Show the plan (if any) matching the given problem ID
 
-planning.domains.py submit plan [integer] [plan file]   Submit the provided plan for validation and possible storage
+planning.domains.py list tags                             Lists all of the available tags.
+planning.domains.py tag collection [integer] [string]     Tags the specified collection (integer) with a tag (string)
+planning.domains.py tag domain [integer] [string]         Tags the specified domain (integer) with a tag (string)
+planning.domains.py untag collection [integer] [string]   Un-tags the specified collection (integer) with a tag (string)
+planning.domains.py untag domain [integer] [string]       Un-tags the specified domain (integer) with a tag (string)
+
+planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
 """
 
 
@@ -269,6 +275,20 @@ if __name__ == "__main__":
             else:
                 print("Error: unknown submission type {0}".format(sub))
 
+        elif sys.argv[i] == 'list':
+            i += 1
+
+            sub = sys.argv[i].strip()
+            i += 1
+
+            if sub == 'tags':
+                print("{0}\t{1}\n".format('Tag Name'.rjust(26), 'Description'))
+                tags = api.get_tags()
+                for t in sorted(tags.keys()):
+                    print("{0}\t{1}".format(t.rjust(26), tags[t]))
+                print()
+            else:
+                print("Error: unknown list type {0}".format(sub))
         else:
 
             command = sys.argv[i]
@@ -299,6 +319,27 @@ if __name__ == "__main__":
                 find(subcommand, argument)
             elif command == "show":
                 show(subcommand, argument)
+            elif command in ["tag", "untag"]:
+
+                iid = int(argument)
+
+                if i == len(sys.argv):
+                    print("Error: expected a tag name")
+                    exit(1)
+                tag = sys.argv[i]
+                i += 1
+
+                if 'tag' == command and 'collection' == subcommand:
+                    api.tag_collection(iid, tag)
+                elif 'tag' == command and 'domain' == subcommand:
+                    api.tag_domain(iid, tag)
+                elif 'untag' == command and 'collection' == subcommand:
+                    api.untag_collection(iid, tag)
+                elif 'untag' == command and 'domain' == subcommand:
+                    api.untag_domain(iid, tag)
+                else:
+                    print("Error: can only (un)tag a collection or domain")
+                    exit(1)
             else:
                 print("Error: unknown command {0}".format(command))
                 exit(1)
