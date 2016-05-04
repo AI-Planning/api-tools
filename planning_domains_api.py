@@ -76,6 +76,23 @@ def update_stat(stat_type, iid, attribute, value, description):
     else:
         print "Result: %s" % str(res)
 
+def change_tag(tag_type, iid, tid):
+
+    params = {'user': USER_EMAIL,
+              'password': USER_TOKEN,
+              'tag_id': tid}
+
+    res = query("/classical/%s/%d" % (tag_type, iid),
+                qtype='POST',
+                params=params,
+                offline=False,
+                format='')
+
+    if res['error']:
+        print "Error: %s" % res['message']
+    else:
+        print "Result: %s" % str(res)
+
 def simple_query(qs):
     res = query(qs)
     if res['error']:
@@ -118,6 +135,23 @@ def update_collection_stat(cid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('collection', cid, attribute, value, description)
 
+def tag_collection(cid, tagname):
+    """Tag the collection with a given tag"""
+    tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
+    if tagname not in tag2id:
+        print "Error: Tag %s does not exist" % tagname
+    else:
+        change_tag("tagcollection", cid, tag2id[tagname])
+
+def untag_collection(cid, tagname):
+    """Remove the given tag from the collection"""
+    tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
+    if tagname not in tag2id:
+        print "Error: Tag %s does not exist" % tagname
+    else:
+        change_tag("untagcollection", cid, tag2id[tagname])
+
+
 
 def get_domains(cid):
     """Return the set of domains for a given collection id"""
@@ -134,6 +168,22 @@ def find_domains(name):
 def update_domain_stat(did, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('domain', did, attribute, value, description)
+
+def tag_domain(did, tagname):
+    """Tag the domain with a given tag"""
+    tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
+    if tagname not in tag2id:
+        print "Error: Tag %s does not exist" % tagname
+    else:
+        change_tag("tagdomain", did, tag2id[tagname])
+
+def untag_domain(did, tagname):
+    """Tag the domain with a given tag"""
+    tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
+    if tagname not in tag2id:
+        print "Error: Tag %s does not exist" % tagname
+    else:
+        change_tag("untagdomain", did, tag2id[tagname])
 
 
 def get_problems(did):
