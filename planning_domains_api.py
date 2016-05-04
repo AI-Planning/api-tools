@@ -89,6 +89,11 @@ def get_version():
     return str(query('/version')['version'])
 
 
+def get_tags():
+    """Get the list of available tags"""
+    return {t['name']: t['description'] for t in simple_query("/classical/tags")}
+
+
 def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
     res = query('/classical/collections/')
