@@ -241,7 +241,7 @@ if __name__ == "__main__":
         if sys.argv[i] == "update":
             if api.checkForDomainPath():
                 print("Updating...")
-                os.system("cd {0}; git pull -u".format(api.DOMAIN_PATH))
+                os.system("cd {0}; git pull".format(api.DOMAIN_PATH))
             else:
                 print("Error: Domain path is not set.")
 
