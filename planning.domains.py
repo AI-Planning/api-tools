@@ -39,8 +39,10 @@ planning.domains.py list tags                             Lists all of the avail
 
 planning.domains.py tag collection [integer] [string]     Tags the specified collection (integer) with a tag (string)
 planning.domains.py tag domain [integer] [string]         Tags the specified domain (integer) with a tag (string)
+planning.domains.py tag problem [integer] [string]        Tags the specified problem (integer) with a tag (string)
 planning.domains.py untag collection [integer] [string]   Un-tags the specified collection (integer) with a tag (string)
 planning.domains.py untag domain [integer] [string]       Un-tags the specified domain (integer) with a tag (string)
+planning.domains.py untag problem [integer] [string]      Un-tags the specified problem (integer) with a tag (string)
 
 planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
 """
@@ -345,12 +347,16 @@ if __name__ == "__main__":
                     api.tag_collection(iid, tag)
                 elif 'tag' == command and 'domain' == subcommand:
                     api.tag_domain(iid, tag)
+                elif 'tag' == command and 'problem' == subcommand:
+                    api.tag_problem(iid, tag)
                 elif 'untag' == command and 'collection' == subcommand:
                     api.untag_collection(iid, tag)
                 elif 'untag' == command and 'domain' == subcommand:
                     api.untag_domain(iid, tag)
+                elif 'untag' == command and 'problem' == subcommand:
+                    api.untag_problem(iid, tag)
                 else:
-                    print("Error: can only (un)tag a collection or domain")
+                    print("Error: can only (un)tag a collection, domain, or problem")
                     exit(1)
             else:
                 print("Error: unknown command {0}".format(command))

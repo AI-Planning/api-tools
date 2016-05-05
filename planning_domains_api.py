@@ -144,7 +144,7 @@ def tag_collection(cid, tagname):
         change_tag("tagcollection", cid, tag2id[tagname])
 
 def untag_collection(cid, tagname):
-    """Remove the given tag from the collection"""
+    """Remove a given tag from a collection"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
         print "Error: Tag %s does not exist" % tagname
@@ -178,7 +178,7 @@ def tag_domain(did, tagname):
         change_tag("tagdomain", did, tag2id[tagname])
 
 def untag_domain(did, tagname):
-    """Tag the domain with a given tag"""
+    """Remove a given tag from a domain"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
         print "Error: Tag %s does not exist" % tagname
@@ -201,6 +201,22 @@ def find_problems(name):
 def update_problem_stat(pid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('problem', pid, attribute, value, description)
+
+def tag_problem(pid, tagname):
+    """Tag the problem with a given tag"""
+    tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
+    if tagname not in tag2id:
+        print "Error: Tag %s does not exist" % tagname
+    else:
+        change_tag("tagproblem", pid, tag2id[tagname])
+
+def untag_problem(pid, tagname):
+    """Remove a given tag from a problem"""
+    tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
+    if tagname not in tag2id:
+        print "Error: Tag %s does not exist" % tagname
+    else:
+        change_tag("untagproblem", pid, tag2id[tagname])
 
 def get_plan(pid):
     """Return the existing plan for a problem if it exists"""
