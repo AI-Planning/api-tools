@@ -129,7 +129,7 @@ def get_collection(cid):
 
 def find_collections(name):
     """Find the collections matching the string name"""
-    return simple_query("/classical/collections/search?name=%s" % name)
+    return simple_query("/classical/collections/search?collection_name=%s" % name)
 
 def update_collection_stat(cid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
@@ -163,7 +163,7 @@ def get_domain(did):
 
 def find_domains(name):
     """Return the domains matching the string name"""
-    return simple_query("/classical/domains/search?name=%s" % name)
+    return simple_query("/classical/domains/search?domain_name=%s" % name)
 
 def update_domain_stat(did, attribute, value, description):
     """Update the attribute stat with a given value and description"""
