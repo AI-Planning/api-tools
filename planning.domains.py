@@ -34,7 +34,9 @@ planning.domains.py show domain [integer]                 Find domains whose tit
 planning.domains.py show problem [integer]                Find problems whose title/ID contains 'integer'
 planning.domains.py show plan [integer]                   Show the plan (if any) matching the given problem ID
 
+planning.domains.py list collections                      Lists all of the collections.
 planning.domains.py list tags                             Lists all of the available tags.
+
 planning.domains.py tag collection [integer] [string]     Tags the specified collection (integer) with a tag (string)
 planning.domains.py tag domain [integer] [string]         Tags the specified domain (integer) with a tag (string)
 planning.domains.py untag collection [integer] [string]   Un-tags the specified collection (integer) with a tag (string)
@@ -286,6 +288,16 @@ if __name__ == "__main__":
                 tags = api.get_tags()
                 for t in sorted(tags.keys()):
                     print("{0}\t{1}".format(t.rjust(26), tags[t]))
+                print()
+            elif sub == 'collections':
+                cols = {c['collection_id']: c for c in api.get_collections()}
+                for cid in sorted(cols.keys()):
+                    c = cols[cid]
+                    print()
+                    print("         ID: {0}".format(c['collection_id']))
+                    print("       Name: {0}".format(c['collection_name']))
+                    print("      #Doms: {0}".format(len(c['domain_set'])))
+                    print("Description: {0}".format(c['description']))
                 print()
             else:
                 print("Error: unknown list type {0}".format(sub))
