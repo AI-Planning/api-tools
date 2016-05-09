@@ -202,6 +202,11 @@ def update_problem_stat(pid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('problem', pid, attribute, value, description)
 
+def get_null_attribute_problems(attribute):
+    """Fetches all of the problems that do not have the attribute set yet"""
+    return {i['id']: (i['domain_path'], i['problem_path'])
+            for i in map(localize, simple_query("/classical/nullattribute/%s" % attribute))}
+
 def tag_problem(pid, tagname):
     """Tag the problem with a given tag"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}

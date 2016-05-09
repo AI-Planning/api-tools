@@ -36,6 +36,7 @@ planning.domains.py show plan [integer]                   Show the plan (if any)
 
 planning.domains.py list collections                      Lists all of the collections.
 planning.domains.py list tags                             Lists all of the available tags.
+planning.domains.py list null-attribute [string]          Lists all of the problems that have a null attribute setting (string)
 
 planning.domains.py tag collection [integer] [string]     Tags the specified collection (integer) with a tag (string)
 planning.domains.py tag domain [integer] [string]         Tags the specified domain (integer) with a tag (string)
@@ -301,8 +302,19 @@ if __name__ == "__main__":
                     print("      #Doms: {0}".format(len(c['domain_set'])))
                     print("Description: {0}".format(c['description']))
                 print()
+            elif sub == 'null-attribute':
+                attribute = sys.argv[i].strip()
+                i += 1
+                nullprobs = api.get_null_attribute_problems(attribute)
+                if len(nullprobs) < 25:
+                    pprint.pprint(nullprobs)
+                else:
+                    print("{0} problems have {1} set to null. 10 examples:\n".format(len(nullprobs), attribute))
+                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in nullprobs.keys()[:10]]))
+                    print(' - ...')
             else:
                 print("Error: unknown list type {0}".format(sub))
+                exit(1)
         else:
 
             command = sys.argv[i]
@@ -361,6 +373,6 @@ if __name__ == "__main__":
             else:
                 print("Error: unknown command {0}".format(command))
                 exit(1)
-
+    print()
 
 
