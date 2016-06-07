@@ -46,6 +46,8 @@ planning.domains.py untag domain [integer] [string]       Un-tags the specified 
 planning.domains.py untag problem [integer] [string]      Un-tags the specified problem (integer) with a tag (string)
 
 planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
+
+planning.domains.py generate-lab [integer] [string]       Generate a lab-style python file (string) given a collection (integer)
 """
 
 
@@ -224,6 +226,61 @@ def submit_plan(pid, pfile):
         plan = f.read()
     api.submit_plan(pid, plan)
 
+def generate_lab(cid, outf):
+
+    domains = {}
+    for dom in api.get_domains(cid):
+
+        # Turn the links into relative paths for this machine
+        probs = map(api.localize, api.get_problems(dom['domain_id']))
+
+        # Map the domain name to the list of domain-problem pairs
+        dname = dom['domain_name']
+        domains[dname] = {}
+        for p in probs:
+            #domains[dname].append((p['domain_path'], p['problem_path']))
+            domains[dname][p['problem'].split('.pddl')[0]] = (p['domain_path'], p['problem_path'])
+
+    with open(outf, 'w') as f:
+        f.write('# We use a mock class as a substitute for lab\'s Problem class\n')
+        f.write('#  - Same interface, different internals\n')
+        f.write('class Problem(object):\n')
+        f.write('    def __init__(self, benchmarks_dir, domain, problem, dfile, pfile):\n')
+        f.write('        self.benchmarks_dir = benchmarks_dir\n')
+        f.write('        self.domain = domain\n')
+        f.write('        self.problem = problem\n')
+        f.write('        self.domain_file = dfile\n')
+        f.write('        self.problem_file = pfile\n')
+        f.write('\n')
+        f.write('    def __str__(self):\n')
+        f.write('        return "%s:%s" % (self.domain, self.problem)\n')
+        f.write('\n')
+        f.write('    def __repr__(self):\n')
+        f.write('        return "<Problem %s:%s>" % (self.domain, self.problem)\n')
+        f.write('\n')
+        f.write('    def __hash__(self):\n')
+        f.write('        return hash((self.domain, self.problem))\n')
+        f.write('\n')
+        f.write('    def __cmp__(self, other):\n')
+        f.write('        return cmp((self.domain, self.problem), (other.domain, other.problem))\n')
+        f.write('\n')
+        f.write('    def problem_file(self):\n')
+        f.write('        return self.pfile\n')
+        f.write('\n')
+        f.write('    def domain_file(self):\n')
+        f.write('        return self.dfile\n')
+        f.write('\n\n')
+        f.write('BENCHMARKS = ')
+        f.write(pprint.pformat(domains))
+        f.write('\n\nPROBLEMS = []\n')
+        f.write('for dom in BENCHMARKS:\n')
+        f.write('    for prob in BENCHMARKS[dom]:\n')
+        f.write('        PROBLEMS.append(Problem("THIS SHOULD NOT BE USED",\n')
+        f.write('                                dom, prob,\n')
+        f.write('                                BENCHMARKS[dom][prob][0],\n')
+        f.write('                                BENCHMARKS[dom][prob][1]))\n')
+        f.write('\n')
+
 if __name__ == "__main__":
 
     home_dir = os.path.expanduser("~")
@@ -257,6 +314,20 @@ if __name__ == "__main__":
                 print("Error: Domain path is not set.")
 
             i += 1
+
+        elif sys.argv[i] == 'generate-lab':
+            i += 1
+
+            try:
+                cid = int(sys.argv[i].strip())
+                i += 1
+                outf = sys.argv[i].strip()
+                i += 1
+            except:
+                print("Must provide a valid collection ID and filename.")
+                exit(1)
+
+            generate_lab(cid, outf)
 
         elif sys.argv[i] == 'register':
             register()
