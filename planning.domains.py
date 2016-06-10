@@ -13,21 +13,41 @@ langAttribute = "{http://www.w3.org/XML/1998/namespace}lang"
 domainPath = None
 installationSettings = None
 installationTree = None
+userEmail = None
+userToken = None
 
 defaultNamespace = "http://settings.planning.domains"
 
 USAGE_STRING = """
 No command-line options given.  Usage:
 
-planning.domains.py update                            Update the local domain repository.
+planning.domains.py update                                Update the local domain repository.
 
-planning.domains.py find collections [string]          Find collections whose title/ID contains 'string'
-planning.domains.py find domains [string]              Find domains whose title/ID contains 'string'
-planning.domains.py find problems [string]             Find problems whose title/ID contains 'string'
+planning.domains.py register                              Register your email and token for making API edits
 
-planning.domains.py show collection [integer]         Find collections whose title/ID contains 'integer'
-planning.domains.py show domain [integer]             Find domains whose title/ID contains 'integer'
-planning.domains.py show problem [integer]            Find problems whose title/ID contains 'integer'
+planning.domains.py find collections [string]             Find collections whose title/ID contains 'string'
+planning.domains.py find domains [string]                 Find domains whose title/ID contains 'string'
+planning.domains.py find problems [string]                Find problems whose title/ID contains 'string'
+
+planning.domains.py show collection [integer]             Find collections whose title/ID contains 'integer'
+planning.domains.py show domain [integer]                 Find domains whose title/ID contains 'integer'
+planning.domains.py show problem [integer]                Find problems whose title/ID contains 'integer'
+planning.domains.py show plan [integer]                   Show the plan (if any) matching the given problem ID
+
+planning.domains.py list collections                      Lists all of the collections.
+planning.domains.py list tags                             Lists all of the available tags.
+planning.domains.py list null-attribute [string]          Lists all of the problems that have a null attribute setting (string)
+
+planning.domains.py tag collection [integer] [string]     Tags the specified collection (integer) with a tag (string)
+planning.domains.py tag domain [integer] [string]         Tags the specified domain (integer) with a tag (string)
+planning.domains.py tag problem [integer] [string]        Tags the specified problem (integer) with a tag (string)
+planning.domains.py untag collection [integer] [string]   Un-tags the specified collection (integer) with a tag (string)
+planning.domains.py untag domain [integer] [string]       Un-tags the specified domain (integer) with a tag (string)
+planning.domains.py untag problem [integer] [string]      Un-tags the specified problem (integer) with a tag (string)
+
+planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
+
+planning.domains.py generate-lab [integer] [string]       Generate a lab-style python file (string) given a collection (integer)
 """
 
 
@@ -100,6 +120,8 @@ def loadSettings(home_dir,pd_dir):
     global installationTree
     global installationSettings
     global domainPath
+    global userEmail
+    global userToken
 
     if os.path.isfile(settingsXML):
         installationTree = etree.parse(settingsXML)
@@ -112,7 +134,13 @@ def loadSettings(home_dir,pd_dir):
                 if not os.path.isdir(domainPath):
                     fetchPlanningDomains(domainPath)
 
-                return
+            if child.tag == "email":
+                userEmail = child.text
+
+            if child.tag == "token":
+                userToken = child.text
+
+        return
 
     if installationSettings is None:
         installationSettings = etree.Element("{http://settings.planning.domains}settings")
@@ -135,7 +163,28 @@ def loadSettings(home_dir,pd_dir):
 
     etree.SubElement(installationSettings,"domain_path").text = domainPath
 
+    userEmail = raw_input("Enter email for API updates: ")
+    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
+
+    etree.SubElement(installationSettings,"email").text = userEmail
+    etree.SubElement(installationSettings,"token").text = userToken
+
     saveSettings()
+
+
+def register():
+    global userEmail
+    global userToken
+
+    userEmail = raw_input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
+    userToken = raw_input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
+
+    filter(lambda x: x.tag == 'email', installationSettings)[0].text = userEmail
+    filter(lambda x: x.tag == 'token', installationSettings)[0].text = userToken
+
+    saveSettings()
+
+    print("Email and token settings saved!\n")
 
 
 def find(sub, arg):
@@ -164,12 +213,73 @@ def show(sub, arg):
         res = api.get_domain(arg)
     elif sub == 'problem':
         res = api.get_problem(arg)
+    elif sub == 'plan':
+        res = api.get_plan(arg)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
 
     pprint.pprint(res)
 
+def submit_plan(pid, pfile):
+    with open(pfile) as f:
+        plan = f.read()
+    api.submit_plan(pid, plan)
+
+def generate_lab(cid, outf):
+
+    domains = {}
+    for dom in api.get_domains(cid):
+
+        # Turn the links into relative paths for this machine
+        probs = map(api.localize, api.get_problems(dom['domain_id']))
+
+        # Map the domain name to the list of domain-problem pairs
+        dname = dom['domain_name']
+        domains[dname] = {}
+        for p in probs:
+            #domains[dname].append((p['domain_path'], p['problem_path']))
+            domains[dname][p['problem'].split('.pddl')[0]] = (p['domain_path'], p['problem_path'])
+
+    with open(outf, 'w') as f:
+        f.write('# We use a mock class as a substitute for lab\'s Problem class\n')
+        f.write('#  - Same interface, different internals\n')
+        f.write('class Problem(object):\n')
+        f.write('    def __init__(self, benchmarks_dir, domain, problem, dfile, pfile):\n')
+        f.write('        self.benchmarks_dir = benchmarks_dir\n')
+        f.write('        self.domain = domain\n')
+        f.write('        self.problem = problem\n')
+        f.write('        self.domain_file = dfile\n')
+        f.write('        self.problem_file = pfile\n')
+        f.write('\n')
+        f.write('    def __str__(self):\n')
+        f.write('        return "%s:%s" % (self.domain, self.problem)\n')
+        f.write('\n')
+        f.write('    def __repr__(self):\n')
+        f.write('        return "<Problem %s:%s>" % (self.domain, self.problem)\n')
+        f.write('\n')
+        f.write('    def __hash__(self):\n')
+        f.write('        return hash((self.domain, self.problem))\n')
+        f.write('\n')
+        f.write('    def __cmp__(self, other):\n')
+        f.write('        return cmp((self.domain, self.problem), (other.domain, other.problem))\n')
+        f.write('\n')
+        f.write('    def problem_file(self):\n')
+        f.write('        return self.pfile\n')
+        f.write('\n')
+        f.write('    def domain_file(self):\n')
+        f.write('        return self.dfile\n')
+        f.write('\n\n')
+        f.write('BENCHMARKS = ')
+        f.write(pprint.pformat(domains))
+        f.write('\n\nPROBLEMS = []\n')
+        f.write('for dom in BENCHMARKS:\n')
+        f.write('    for prob in BENCHMARKS[dom]:\n')
+        f.write('        PROBLEMS.append(Problem("THIS SHOULD NOT BE USED",\n')
+        f.write('                                dom, prob,\n')
+        f.write('                                BENCHMARKS[dom][prob][0],\n')
+        f.write('                                BENCHMARKS[dom][prob][1]))\n')
+        f.write('\n')
 
 if __name__ == "__main__":
 
@@ -199,12 +309,83 @@ if __name__ == "__main__":
         if sys.argv[i] == "update":
             if api.checkForDomainPath():
                 print("Updating...")
-                os.system("cd {0}; git pull -u".format(api.DOMAIN_PATH))
+                os.system("cd {0}; git pull".format(api.DOMAIN_PATH))
             else:
                 print("Error: Domain path is not set.")
 
             i += 1
 
+        elif sys.argv[i] == 'generate-lab':
+            i += 1
+
+            try:
+                cid = int(sys.argv[i].strip())
+                i += 1
+                outf = sys.argv[i].strip()
+                i += 1
+            except:
+                print("Must provide a valid collection ID and filename.")
+                exit(1)
+
+            generate_lab(cid, outf)
+
+        elif sys.argv[i] == 'register':
+            register()
+            i += 1
+
+        elif sys.argv[i] == 'submit':
+            i += 1
+
+            sub = sys.argv[i].strip()
+            i += 1
+
+            if sub == 'plan':
+
+                pid = int(sys.argv[i].strip())
+                i += 1
+
+                pfile = sys.argv[i].strip()
+                i += 1
+
+                submit_plan(pid, pfile)
+            else:
+                print("Error: unknown submission type {0}".format(sub))
+
+        elif sys.argv[i] == 'list':
+            i += 1
+
+            sub = sys.argv[i].strip()
+            i += 1
+
+            if sub == 'tags':
+                print("{0}\t{1}\n".format('Tag Name'.rjust(26), 'Description'))
+                tags = api.get_tags()
+                for t in sorted(tags.keys()):
+                    print("{0}\t{1}".format(t.rjust(26), tags[t]))
+                print()
+            elif sub == 'collections':
+                cols = {c['collection_id']: c for c in api.get_collections()}
+                for cid in sorted(cols.keys()):
+                    c = cols[cid]
+                    print()
+                    print("         ID: {0}".format(c['collection_id']))
+                    print("       Name: {0}".format(c['collection_name']))
+                    print("      #Doms: {0}".format(len(c['domain_set'])))
+                    print("Description: {0}".format(c['description']))
+                print()
+            elif sub == 'null-attribute':
+                attribute = sys.argv[i].strip()
+                i += 1
+                nullprobs = api.get_null_attribute_problems(attribute)
+                if len(nullprobs) < 25:
+                    pprint.pprint(nullprobs)
+                else:
+                    print("{0} problems have {1} set to null. 10 examples:\n".format(len(nullprobs), attribute))
+                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in nullprobs.keys()[:10]]))
+                    print(' - ...')
+            else:
+                print("Error: unknown list type {0}".format(sub))
+                exit(1)
         else:
 
             command = sys.argv[i]
@@ -235,9 +416,34 @@ if __name__ == "__main__":
                 find(subcommand, argument)
             elif command == "show":
                 show(subcommand, argument)
+            elif command in ["tag", "untag"]:
+
+                iid = int(argument)
+
+                if i == len(sys.argv):
+                    print("Error: expected a tag name")
+                    exit(1)
+                tag = sys.argv[i]
+                i += 1
+
+                if 'tag' == command and 'collection' == subcommand:
+                    api.tag_collection(iid, tag)
+                elif 'tag' == command and 'domain' == subcommand:
+                    api.tag_domain(iid, tag)
+                elif 'tag' == command and 'problem' == subcommand:
+                    api.tag_problem(iid, tag)
+                elif 'untag' == command and 'collection' == subcommand:
+                    api.untag_collection(iid, tag)
+                elif 'untag' == command and 'domain' == subcommand:
+                    api.untag_domain(iid, tag)
+                elif 'untag' == command and 'problem' == subcommand:
+                    api.untag_problem(iid, tag)
+                else:
+                    print("Error: can only (un)tag a collection, domain, or problem")
+                    exit(1)
             else:
                 print("Error: unknown command {0}".format(command))
                 exit(1)
-
+    print()
 
 
