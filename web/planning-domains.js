@@ -1,5 +1,5 @@
 
-var VERSION = 0.1;
+var VERSION = 0.2;
 
 // Delay the version check just so we can be sure jquery is loaded
 setTimeout(function(){
