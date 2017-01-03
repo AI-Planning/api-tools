@@ -3,7 +3,7 @@ import httplib, urllib, json, os, re
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
-VERSION = '0.3'
+VERSION = '0.4'
 
 DOMAIN_PATH = False
 USER_EMAIL = False
