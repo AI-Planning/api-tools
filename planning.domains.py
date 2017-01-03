@@ -47,7 +47,8 @@ planning.domains.py untag problem [integer] [string]      Un-tags the specified 
 
 planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
 
-planning.domains.py generate-lab [integer] [string]       Generate a lab-style python file (string) given a collection (integer)
+planning.domains.py cache [integer] [string]              Collect all of the domains in a collection (integer) into a specified folder (string)
+planning.domains.py cache-all [integer] [string]           Same as previous, but also includes the problem data / statistics
 """
 
 
@@ -226,59 +227,58 @@ def submit_plan(pid, pfile):
         plan = f.read()
     api.submit_plan(pid, plan)
 
-def generate_lab(cid, outf):
+def cache(cid, outdir, include_data = False):
+
+    if os.path.exists(outdir):
+        print("Error: Output directory already exists.")
+        exit(1)
+    else:
+        os.mkdir(outdir)
 
     domains = {}
-    for dom in api.get_domains(cid):
+    problem_data = {}
+    domain_data = api.get_domains(cid)
+    domain_names = [dom['domain_name'] for dom in domain_data]
+    assert len(set(domain_names)) == len(domain_names), "Error: It appears as though the collection has repeated domain names."
+
+    for dom in domain_data:
+
+        dname = dom['domain_name']
+
+        # Map the domain name to the list of domain-problem pairs and problem data
+        domains[dname] = []
+        problem_data[dname] = []
+
+        # Make the directory for the domain
+        os.mkdir(os.path.join(outdir, dname))
 
         # Turn the links into relative paths for this machine
         probs = map(api.localize, api.get_problems(dom['domain_id']))
 
-        # Map the domain name to the list of domain-problem pairs
-        dname = dom['domain_name']
-        domains[dname] = {}
-        for p in probs:
-            #domains[dname].append((p['domain_path'], p['problem_path']))
-            domains[dname][p['problem'].split('.pddl')[0]] = (p['domain_path'], p['problem_path'])
+        # Copy the domain and problem files to their appropriate directory
+        for i in range(len(probs)):
+            dpath = os.path.join(dname, "dom%.2d.pddl" % (i+1))
+            ppath = os.path.join(dname, "prob%.2d.pddl" % (i+1))
 
-    with open(outf, 'w') as f:
-        f.write('# We use a mock class as a substitute for lab\'s Problem class\n')
-        f.write('#  - Same interface, different internals\n')
-        f.write('class Problem(object):\n')
-        f.write('    def __init__(self, benchmarks_dir, domain, problem, dfile, pfile):\n')
-        f.write('        self.benchmarks_dir = benchmarks_dir\n')
-        f.write('        self.domain = domain\n')
-        f.write('        self.problem = problem\n')
-        f.write('        self.domain_file = dfile\n')
-        f.write('        self.problem_file = pfile\n')
-        f.write('\n')
-        f.write('    def __str__(self):\n')
-        f.write('        return "%s:%s" % (self.domain, self.problem)\n')
-        f.write('\n')
-        f.write('    def __repr__(self):\n')
-        f.write('        return "<Problem %s:%s>" % (self.domain, self.problem)\n')
-        f.write('\n')
-        f.write('    def __hash__(self):\n')
-        f.write('        return hash((self.domain, self.problem))\n')
-        f.write('\n')
-        f.write('    def __cmp__(self, other):\n')
-        f.write('        return cmp((self.domain, self.problem), (other.domain, other.problem))\n')
-        f.write('\n')
-        f.write('    def problem_file(self):\n')
-        f.write('        return self.pfile\n')
-        f.write('\n')
-        f.write('    def domain_file(self):\n')
-        f.write('        return self.dfile\n')
-        f.write('\n\n')
-        f.write('BENCHMARKS = ')
+            os.system("cp %s %s" % (probs[i]['domain_path'], os.path.join(outdir,dpath)))
+            os.system("cp %s %s" % (probs[i]['problem_path'], os.path.join(outdir,ppath)))
+
+            domains[dname].append((dpath,ppath))
+
+            if include_data:
+                problem_data[dname].append(probs[i])
+                problem_data[dname][-1]['domain_path'] = os.path.abspath(os.path.join(outdir,dpath))
+                problem_data[dname][-1]['problem_path'] = os.path.abspath(os.path.join(outdir,ppath))
+
+    with open(os.path.join(outdir, "domains.py"), 'w') as f:
+        f.write('\n# Use "from domains import DOMAINS" to get the benchmark set\n')
+        if include_data:
+            f.write('\n# Use "from domains import DATA" to get the problem data (aligns with the DOMAINS list)\n')
+        f.write('\nDOMAINS = ')
         f.write(pprint.pformat(domains))
-        f.write('\n\nPROBLEMS = []\n')
-        f.write('for dom in BENCHMARKS:\n')
-        f.write('    for prob in BENCHMARKS[dom]:\n')
-        f.write('        PROBLEMS.append(Problem("THIS SHOULD NOT BE USED",\n')
-        f.write('                                dom, prob,\n')
-        f.write('                                BENCHMARKS[dom][prob][0],\n')
-        f.write('                                BENCHMARKS[dom][prob][1]))\n')
+        if include_data:
+            f.write('\n\nDATA = ')
+            f.write(pprint.pformat(problem_data))
         f.write('\n')
 
 if __name__ == "__main__":
@@ -315,19 +315,33 @@ if __name__ == "__main__":
 
             i += 1
 
-        elif sys.argv[i] == 'generate-lab':
+        elif sys.argv[i] == 'cache':
             i += 1
 
             try:
                 cid = int(sys.argv[i].strip())
                 i += 1
-                outf = sys.argv[i].strip()
+                outdir = sys.argv[i].strip()
                 i += 1
             except:
                 print("Must provide a valid collection ID and filename.")
                 exit(1)
 
-            generate_lab(cid, outf)
+            cache(cid, outdir)
+
+        elif sys.argv[i] == 'cache-all':
+            i += 1
+
+            try:
+                cid = int(sys.argv[i].strip())
+                i += 1
+                outdir = sys.argv[i].strip()
+                i += 1
+            except:
+                print("Must provide a valid collection ID and filename.")
+                exit(1)
+
+            cache(cid, outdir, True)
 
         elif sys.argv[i] == 'register':
             register()
