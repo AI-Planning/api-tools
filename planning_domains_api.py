@@ -261,6 +261,24 @@ def localize(prob):
     return toRet
 
 
+def generat_lab_suite(cid):
+    """Uses the lab API to generate a suite of problems in a collection"""
+    try:
+        from downward.suites import Problem
+    except:
+        print "\n Error: Lab does not seem to be installed ( https://lab.readthedocs.io/ )\n"
+        return
+
+    SUITE = []
+    for d in get_domains(cid):
+        for p in get_problems(d['domain_id']):
+            SUITE.append(Problem(p['domain'], p['problem'],
+                                 domain_file = p['domain_path'],
+                                 problem_file = p['problem_path'],
+                                 properties = {'api_problem_id': p['problem_id']}))
+    return SUITE
+
+
 if not checkForDomainPath():
     print "\n Warning: No domain path is set\n"
 
