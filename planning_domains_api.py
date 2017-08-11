@@ -261,7 +261,7 @@ def localize(prob):
     return toRet
 
 
-def generat_lab_suite(cid):
+def generate_lab_suite(cid):
     """Uses the lab API to generate a suite of problems in a collection"""
     try:
         from downward.suites import Problem
