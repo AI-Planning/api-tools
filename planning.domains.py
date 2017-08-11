@@ -48,7 +48,7 @@ planning.domains.py untag problem [integer] [string]      Un-tags the specified 
 planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
 
 planning.domains.py cache [integer] [string]              Collect all of the domains in a collection (integer) into a specified folder (string)
-planning.domains.py cache-all [integer] [string]           Same as previous, but also includes the problem data / statistics
+planning.domains.py cache-all [integer] [string]          Same as previous, but also includes the problem data / statistics
 """
 
 
@@ -229,6 +229,8 @@ def submit_plan(pid, pfile):
 
 def cache(cid, outdir, include_data = False):
 
+    print("Caching collection %d to [%s] (data included = %s)..." % (cid, outdir, str(include_data)))
+
     if os.path.exists(outdir):
         print("Error: Output directory already exists.")
         exit(1)
@@ -257,8 +259,8 @@ def cache(cid, outdir, include_data = False):
 
         # Copy the domain and problem files to their appropriate directory
         for i in range(len(probs)):
-            dpath = os.path.join(dname, "dom%.2d.pddl" % (i+1))
-            ppath = os.path.join(dname, "prob%.2d.pddl" % (i+1))
+            dpath = os.path.join(dname, "domain_%.2d.pddl" % (i+1))
+            ppath = os.path.join(dname, "%.2d.pddl" % (i+1))
 
             os.system("cp %s %s" % (probs[i]['domain_path'], os.path.join(outdir,dpath)))
             os.system("cp %s %s" % (probs[i]['problem_path'], os.path.join(outdir,ppath)))
@@ -280,6 +282,8 @@ def cache(cid, outdir, include_data = False):
             f.write('\n\nDATA = ')
             f.write(pprint.pformat(problem_data))
         f.write('\n')
+
+    print("Done!\n")
 
 if __name__ == "__main__":
 
