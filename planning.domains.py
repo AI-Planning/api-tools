@@ -100,9 +100,9 @@ def saveSettings():
 
 def fetchPlanningDomains(domainPath):
     try:
-        resp = raw_input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
+        resp = input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
         if 'y' == resp:
-            os.system("git clone git@bitbucket.org:planning-researchers/classical-domains.git {0}".format(domainPath))
+            os.system("git clone https://bitbucket.org/planning-researchers/classical-domains.git {0}".format(domainPath))
         else:
             print("Aborting fetching domains for the directory {0}".format(domainPath))
     except OSError:
@@ -147,7 +147,7 @@ def loadSettings(home_dir,pd_dir):
         installationSettings = etree.Element("{http://settings.planning.domains}settings")
         installationTree = etree.ElementTree(installationSettings)
 
-    domainPath = raw_input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
+    domainPath = input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
 
     domainPath = domainPath.lstrip()
     domainpath = domainPath.rstrip()
@@ -164,8 +164,8 @@ def loadSettings(home_dir,pd_dir):
 
     etree.SubElement(installationSettings,"domain_path").text = domainPath
 
-    userEmail = raw_input("Enter email for API updates: ")
-    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
+    userEmail = input("Enter email for API updates: ")
+    userToken = input("Enter token for API updates (leave blank if none provided): ")
 
     etree.SubElement(installationSettings,"email").text = userEmail
     etree.SubElement(installationSettings,"token").text = userToken
@@ -177,11 +177,11 @@ def register():
     global userEmail
     global userToken
 
-    userEmail = raw_input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
-    userToken = raw_input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
+    userEmail = input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
+    userToken = input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
 
-    filter(lambda x: x.tag == 'email', installationSettings)[0].text = userEmail
-    filter(lambda x: x.tag == 'token', installationSettings)[0].text = userToken
+    list(filter(lambda x: x.tag == 'email', installationSettings))[0].text = userEmail
+    list(filter(lambda x: x.tag == 'token', installationSettings))[0].text = userToken
 
     saveSettings()
 
