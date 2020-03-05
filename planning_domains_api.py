@@ -1,5 +1,5 @@
 
-import http, urllib, json, os, re
+import http.client, urllib.parse, json, os, re
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
@@ -47,8 +47,8 @@ def query(qs, qtype="GET", params={}, offline=False, format='/json'):
 
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
-    params = urllib.urlencode(params)
-    conn = http.client.HTTPConnection(URL)
+    params = urllib.parse.urlencode(params)
+    conn = http.client.HTTPSConnection(URL)
     conn.request(qtype, format+qs, params, headers)
     response = conn.getresponse()
 
