@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-
+from __future__ import print_function
 
 import sys, os, pprint
 
@@ -100,7 +100,7 @@ def saveSettings():
 
 def fetchPlanningDomains(domainPath):
     try:
-        resp = input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
+        resp = raw_input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
         if 'y' == resp:
             os.system("git clone git@github.com:AI-Planning/classical-domains.git {0}".format(domainPath))
         else:
@@ -147,7 +147,7 @@ def loadSettings(home_dir,pd_dir):
         installationSettings = etree.Element("{http://settings.planning.domains}settings")
         installationTree = etree.ElementTree(installationSettings)
 
-    domainPath = input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
+    domainPath = raw_input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
 
     domainPath = domainPath.lstrip()
     domainpath = domainPath.rstrip()
@@ -164,8 +164,8 @@ def loadSettings(home_dir,pd_dir):
 
     etree.SubElement(installationSettings,"domain_path").text = domainPath
 
-    userEmail = input("Enter email for API updates: ")
-    userToken = input("Enter token for API updates (leave blank if none provided): ")
+    userEmail = raw_input("Enter email for API updates: ")
+    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
 
     etree.SubElement(installationSettings,"email").text = userEmail
     etree.SubElement(installationSettings,"token").text = userToken
@@ -177,11 +177,11 @@ def register():
     global userEmail
     global userToken
 
-    userEmail = input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
-    userToken = input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
+    userEmail = raw_input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
+    userToken = raw_input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
 
-    [x for x in installationSettings if x.tag == 'email'][0].text = userEmail
-    [x for x in installationSettings if x.tag == 'token'][0].text = userToken
+    filter(lambda x: x.tag == 'email', installationSettings)[0].text = userEmail
+    filter(lambda x: x.tag == 'token', installationSettings)[0].text = userToken
 
     saveSettings()
 
@@ -253,7 +253,7 @@ def cache(cid, outdir, include_data = False):
         os.mkdir(os.path.join(outdir, dname))
 
         # Turn the links into relative paths for this machine
-        probs = list(map(api.localize, api.get_problems(dom['domain_id'])))
+        probs = map(api.localize, api.get_problems(dom['domain_id']))
 
         # Copy the domain and problem files to their appropriate directory
         for i in range(len(probs)):
@@ -395,7 +395,7 @@ if __name__ == "__main__":
                     pprint.pprint(nullprobs)
                 else:
                     print("{0} problems have {1} set to null. 10 examples:\n".format(len(nullprobs), attribute))
-                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in list(nullprobs.keys())[:10]]))
+                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in nullprobs.keys()[:10]]))
                     print(' - ...')
             else:
                 print("Error: unknown list type {0}".format(sub))

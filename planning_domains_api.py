@@ -1,5 +1,5 @@
 
-import http.client, urllib.request, urllib.parse, urllib.error, json, os, re
+import httplib, urllib, json, os, re
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
@@ -27,7 +27,7 @@ def checkForDomainPath():
     if installationSettings is None:
         return False
 
-    domainPath = [x for x in installationSettings if x.tag == 'domain_path'][0].text
+    domainPath = filter(lambda x: x.tag == 'domain_path', installationSettings)[0].text
     if not os.path.isdir(domainPath):
         return False
 
@@ -36,9 +36,9 @@ def checkForDomainPath():
     global USER_TOKEN
     DOMAIN_PATH = domainPath
     if 'email' in [x.tag for x in installationSettings]:
-        USER_EMAIL = [x for x in installationSettings if x.tag == 'email'][0].text
+        USER_EMAIL = filter(lambda x: x.tag == 'email', installationSettings)[0].text
     if 'token' in [x.tag for x in installationSettings]:
-        USER_TOKEN = [x for x in installationSettings if x.tag == 'token'][0].text
+        USER_TOKEN = filter(lambda x: x.tag == 'token', installationSettings)[0].text
     return True
 
 def query(qs, qtype="GET", params={}, offline=False, format='/json'):
@@ -47,8 +47,8 @@ def query(qs, qtype="GET", params={}, offline=False, format='/json'):
 
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
-    params = urllib.parse.urlencode(params)
-    conn = http.client.HTTPConnection(URL)
+    params = urllib.urlencode(params)
+    conn = httplib.HTTPConnection(URL)
     conn.request(qtype, format+qs, params, headers)
     response = conn.getresponse()
 
@@ -72,9 +72,9 @@ def update_stat(stat_type, iid, attribute, value, description):
                 format='')
 
     if res['error']:
-        print("Error: %s" % res['message'])
+        print "Error: %s" % res['message']
     else:
-        print("Result: %s" % str(res))
+        print "Result: %s" % str(res)
 
 def change_tag(tag_type, iid, tid):
 
@@ -89,14 +89,14 @@ def change_tag(tag_type, iid, tid):
                 format='')
 
     if res['error']:
-        print("Error: %s" % res['message'])
+        print "Error: %s" % res['message']
     else:
-        print("Result: %s" % str(res))
+        print "Result: %s" % str(res)
 
 def simple_query(qs):
     res = query(qs)
     if res['error']:
-        print("Error: %s" % res['message'])
+        print "Error: %s" % res['message']
         return []
     else:
         return res['result']
@@ -115,11 +115,11 @@ def get_collections(ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
     res = query('/classical/collections/')
     if res['error']:
-        print("Error: %s" % res['message'])
+        print "Error: %s" % res['message']
         return []
     else:
         if ipc is not None:
-            return [x for x in res['result'] if x['ipc'] == ipc]
+            return filter(lambda x: x['ipc'] == ipc, res['result'])
         else:
             return res['result']
 
@@ -139,7 +139,7 @@ def tag_collection(cid, tagname):
     """Tag the collection with a given tag"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
-        print("Error: Tag %s does not exist" % tagname)
+        print "Error: Tag %s does not exist" % tagname
     else:
         change_tag("tagcollection", cid, tag2id[tagname])
 
@@ -147,7 +147,7 @@ def untag_collection(cid, tagname):
     """Remove a given tag from a collection"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
-        print("Error: Tag %s does not exist" % tagname)
+        print "Error: Tag %s does not exist" % tagname
     else:
         change_tag("untagcollection", cid, tag2id[tagname])
 
@@ -173,7 +173,7 @@ def tag_domain(did, tagname):
     """Tag the domain with a given tag"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
-        print("Error: Tag %s does not exist" % tagname)
+        print "Error: Tag %s does not exist" % tagname
     else:
         change_tag("tagdomain", did, tag2id[tagname])
 
@@ -181,14 +181,14 @@ def untag_domain(did, tagname):
     """Remove a given tag from a domain"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
-        print("Error: Tag %s does not exist" % tagname)
+        print "Error: Tag %s does not exist" % tagname
     else:
         change_tag("untagdomain", did, tag2id[tagname])
 
 
 def get_problems(did):
     """Return the set of problems for a given domain id"""
-    return list(map(localize, simple_query("/classical/problems/%d" % did)))
+    return map(localize, simple_query("/classical/problems/%d" % did))
 
 def get_problem(pid):
     """Return the problem for a given problem id"""
@@ -196,7 +196,7 @@ def get_problem(pid):
 
 def find_problems(name):
     """Return the problems matching the string name"""
-    return list(map(localize, simple_query("/classical/problems/search?problem_name=%s" % name)))
+    return map(localize, simple_query("/classical/problems/search?problem_name=%s" % name))
 
 def update_problem_stat(pid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
@@ -211,7 +211,7 @@ def tag_problem(pid, tagname):
     """Tag the problem with a given tag"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
-        print("Error: Tag %s does not exist" % tagname)
+        print "Error: Tag %s does not exist" % tagname
     else:
         change_tag("tagproblem", pid, tag2id[tagname])
 
@@ -219,7 +219,7 @@ def untag_problem(pid, tagname):
     """Remove a given tag from a problem"""
     tag2id = {t['name']: t['id'] for t in simple_query("/classical/tags")}
     if tagname not in tag2id:
-        print("Error: Tag %s does not exist" % tagname)
+        print "Error: Tag %s does not exist" % tagname
     else:
         change_tag("untagproblem", pid, tag2id[tagname])
 
@@ -227,7 +227,7 @@ def get_plan(pid):
     """Return the existing plan for a problem if it exists"""
     plan = simple_query("/classical/plan/%d" % pid)['plan'].strip()
     if plan:
-        return list(map(str, plan.split('\n')))
+        return map(str, plan.split('\n'))
     else:
         return None
 
@@ -243,9 +243,9 @@ def submit_plan(pid, plan):
                 format='')
 
     if res['error']:
-        print("Error: %s" % res['message'])
+        print "Error: %s" % res['message']
     else:
-        print("Result: %s" % str(res))
+        print "Result: %s" % str(res)
 
 
 def localize(prob):
@@ -262,10 +262,10 @@ def localize(prob):
 
 
 if not checkForDomainPath():
-    print("\n Warning: No domain path is set\n")
+    print "\n Warning: No domain path is set\n"
 
 try:
     if VERSION != get_version():
-        print("\n Warning: Script version doesn't match API. Do you have the latest version of this file?\n")
+        print "\n Warning: Script version doesn't match API. Do you have the latest version of this file?\n"
 except:
     pass
