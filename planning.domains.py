@@ -102,7 +102,7 @@ def fetchPlanningDomains(domainPath):
     try:
         resp = input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
         if 'y' == resp:
-            os.system("git clone https://bitbucket.org/planning-researchers/classical-domains.git {0}".format(domainPath))
+            os.system("git clone https://github.com/AI-Planning/classical-domains.git {0}".format(domainPath))
         else:
             print("Aborting fetching domains for the directory {0}".format(domainPath))
     except OSError:
