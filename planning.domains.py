@@ -48,7 +48,7 @@ planning.domains.py untag problem [integer] [string]      Un-tags the specified 
 planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
 
 planning.domains.py cache [integer] [string]              Collect all of the domains in a collection (integer) into a specified folder (string)
-planning.domains.py cache-all [integer] [string]           Same as previous, but also includes the problem data / statistics
+planning.domains.py cache-all [integer] [string]          Same as previous, but also includes the problem data / statistics
 """
 
 
@@ -100,9 +100,9 @@ def saveSettings():
 
 def fetchPlanningDomains(domainPath):
     try:
-        resp = raw_input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
+        resp = input("Clone the domain repository (~50Mb download / ~1Gb uncompressed) to directory {0}? (y/n) ".format(domainPath))
         if 'y' == resp:
-            os.system("git clone git@github.com:AI-Planning/classical-domains.git {0}".format(domainPath))
+            os.system("git clone https://github.com/AI-Planning/classical-domains.git {0}".format(domainPath))
         else:
             print("Aborting fetching domains for the directory {0}".format(domainPath))
     except OSError:
@@ -147,7 +147,7 @@ def loadSettings(home_dir,pd_dir):
         installationSettings = etree.Element("{http://settings.planning.domains}settings")
         installationTree = etree.ElementTree(installationSettings)
 
-    domainPath = raw_input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
+    domainPath = input("Enter path for installing files (or hit enter to use {0}): ".format(os.path.join(home_dir,"planning.domains")))
 
     domainPath = domainPath.lstrip()
     domainpath = domainPath.rstrip()
@@ -164,8 +164,8 @@ def loadSettings(home_dir,pd_dir):
 
     etree.SubElement(installationSettings,"domain_path").text = domainPath
 
-    userEmail = raw_input("Enter email for API updates: ")
-    userToken = raw_input("Enter token for API updates (leave blank if none provided): ")
+    userEmail = input("Enter email for API updates: ")
+    userToken = input("Enter token for API updates (leave blank if none provided): ")
 
     etree.SubElement(installationSettings,"email").text = userEmail
     etree.SubElement(installationSettings,"token").text = userToken
@@ -177,11 +177,11 @@ def register():
     global userEmail
     global userToken
 
-    userEmail = raw_input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
-    userToken = raw_input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
+    userEmail = input("Enter email for API updates (leave blank for %s): " % userEmail) or userEmail
+    userToken = input("Enter token for API updates (leave blank for %s): " % userToken) or userToken
 
-    filter(lambda x: x.tag == 'email', installationSettings)[0].text = userEmail
-    filter(lambda x: x.tag == 'token', installationSettings)[0].text = userToken
+    list(filter(lambda x: x.tag == 'email', installationSettings))[0].text = userEmail
+    list(filter(lambda x: x.tag == 'token', installationSettings))[0].text = userToken
 
     saveSettings()
 
@@ -229,6 +229,8 @@ def submit_plan(pid, pfile):
 
 def cache(cid, outdir, include_data = False):
 
+    print("Caching collection %d to [%s] (data included = %s)..." % (cid, outdir, str(include_data)))
+
     if os.path.exists(outdir):
         print("Error: Output directory already exists.")
         exit(1)
@@ -257,8 +259,8 @@ def cache(cid, outdir, include_data = False):
 
         # Copy the domain and problem files to their appropriate directory
         for i in range(len(probs)):
-            dpath = os.path.join(dname, "dom%.2d.pddl" % (i+1))
-            ppath = os.path.join(dname, "prob%.2d.pddl" % (i+1))
+            dpath = os.path.join(dname, "domain_%.2d.pddl" % (i+1))
+            ppath = os.path.join(dname, "%.2d.pddl" % (i+1))
 
             os.system("cp %s %s" % (probs[i]['domain_path'], os.path.join(outdir,dpath)))
             os.system("cp %s %s" % (probs[i]['problem_path'], os.path.join(outdir,ppath)))
@@ -280,6 +282,8 @@ def cache(cid, outdir, include_data = False):
             f.write('\n\nDATA = ')
             f.write(pprint.pformat(problem_data))
         f.write('\n')
+
+    print("Done!\n")
 
 if __name__ == "__main__":
 
