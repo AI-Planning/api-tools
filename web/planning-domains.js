@@ -10,17 +10,18 @@ setTimeout(function(){
 }, 1000);
 
 var headings = {'problem_id': 'ID',
-                'domain_id': 'ID',
-                'collection_id': 'ID',
                 'problem': 'Problem',
                 'lower_bound': 'Lower Bound',
                 'upper_bound': 'Upper Bound',
+                'domain_id': 'ID',
+                'domain_name': 'Domain',
+                'tags': 'Tags',
+                'collection_id': 'ID',
+                'collection_name': 'Collection',
+                'description': 'Description',
                 'max_effective_width': 'Max Width',
                 'hplus': 'H-Plus',
                 'domain': 'Domain',
-                'domain_name': 'Domain',
-                'description': 'Description',
-                'tags': 'Tags',
                 'domain_set': 'Domain Set'
 };
 
