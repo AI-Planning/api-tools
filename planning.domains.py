@@ -201,7 +201,7 @@ def find(sub, arg):
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
 
-    pprint.pprint(res)
+    pprint.pprint(res, sort_dicts=False)
 
 def show(sub, arg):
     """Show an object of type sub that matches the id arg."""
@@ -220,7 +220,7 @@ def show(sub, arg):
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
 
-    pprint.pprint(res)
+    pprint.pprint(res, sort_dicts=False)
 
 def submit_plan(pid, pfile):
     with open(pfile) as f:
@@ -399,7 +399,7 @@ if __name__ == "__main__":
                     pprint.pprint(nullprobs)
                 else:
                     print("{0} problems have {1} set to null. 10 examples:\n".format(len(nullprobs), attribute))
-                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in nullprobs.keys()[:10]]))
+                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in list(nullprobs.keys())[:10]]))
                     print(' - ...')
             else:
                 print("Error: unknown list type {0}".format(sub))

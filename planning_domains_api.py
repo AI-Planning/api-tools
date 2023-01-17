@@ -196,7 +196,7 @@ def get_problem(pid):
 
 def find_problems(name):
     """Return the problems matching the string name"""
-    return map(localize, simple_query("/classical/problems/search?problem_name=%s" % name))
+    return list(map(localize, simple_query("/classical/problems/search?problem_name=%s" % name)))
 
 def update_problem_stat(pid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
@@ -225,11 +225,7 @@ def untag_problem(pid, tagname):
 
 def get_plan(pid):
     """Return the existing plan for a problem if it exists"""
-    plan = simple_query("/classical/plan/%d" % pid)['plan'].strip()
-    if plan:
-        return map(str, plan.split('\n'))
-    else:
-        return None
+    return simple_query("/classical/plan/%d" % pid)
 
 def submit_plan(pid, plan):
     """Submit the provided plan for validation and possible storage"""
@@ -255,8 +251,10 @@ def localize(prob):
 
     toRet = {k:prob[k] for k in prob}
 
-    toRet['domain_path'] = os.path.join(DOMAIN_PATH, prob['domain_path'])
-    toRet['problem_path'] = os.path.join(DOMAIN_PATH, prob['problem_path'])
+    pathKeys = ['domain_path', 'problem_path']
+    for key in pathKeys:
+        if key in toRet:
+            toRet[key] = os.path.join(DOMAIN_PATH, prob[key])
 
     return toRet
 
