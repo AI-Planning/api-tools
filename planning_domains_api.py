@@ -225,7 +225,11 @@ def untag_problem(pid, tagname):
 
 def get_plan(pid):
     """Return the existing plan for a problem if it exists"""
-    return simple_query("/classical/plan/%d" % pid)
+    res = simple_query("/classical/plan/%d" % pid) 
+    if res:
+        return res['plan'].strip()
+    return res
+
 
 def submit_plan(pid, plan):
     """Submit the provided plan for validation and possible storage"""

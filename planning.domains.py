@@ -208,14 +208,16 @@ def show(sub, arg):
 
     arg = int(arg)
 
+    if sub == 'plan':
+        print(api.get_plan(arg))
+        return
+
     if sub == 'collection':
         res = api.get_collection(arg)
     elif sub == 'domain':
         res = api.get_domain(arg)
     elif sub == 'problem':
         res = api.get_problem(arg)
-    elif sub == 'plan':
-        res = api.get_plan(arg)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
