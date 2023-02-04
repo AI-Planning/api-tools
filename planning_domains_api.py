@@ -51,8 +51,11 @@ def query(qs, qtype="GET", params={}, offline=False, format='/json'):
     conn = http.client.HTTPSConnection(URL)
     conn.request(qtype, format+qs, params, headers)
     response = conn.getresponse()
-
-    data = json.loads(response.read())
+    tmp = response.read().decode('utf-8')
+    if "<pre>Payload Too Large</pre>" in tmp:
+        data = { "error": True, "message": "Payload too large."}
+    else:
+        data = json.loads(response.read())
     conn.close()
 
     return data
@@ -241,7 +244,6 @@ def submit_plan(pid, plan):
                 params=params,
                 offline=False,
                 format='')
-
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
