@@ -225,9 +225,6 @@ def show(sub, arg):
     pprint.pprint(res, sort_dicts=False)
 
 def submit_plan(pid, pfile):
-    if os.path.getsize(pfile) > 625000:
-        print("Error: plan file size over 5Mb.")
-        exit(1)
     with open(pfile) as f:
         plan = f.read()
     api.submit_plan(pid, plan)

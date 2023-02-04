@@ -53,6 +53,9 @@ def query(qs, qtype="GET", params={}, offline=False, format='/json'):
     response = conn.getresponse()
 
     data = json.loads(response.read())
+    for i in data.items():
+        if "<pre>Payload Too Large</pre>" in i:
+            data = { "error": True, "message": "Payload too large."}
     conn.close()
 
     return data
@@ -241,7 +244,6 @@ def submit_plan(pid, plan):
                 params=params,
                 offline=False,
                 format='')
-
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
