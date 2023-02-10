@@ -55,7 +55,7 @@ def query(qs, qtype="GET", params={}, offline=False, format='/json'):
     if "<pre>Payload Too Large</pre>" in tmp:
         data = { "error": True, "message": "Payload too large."}
     else:
-        data = json.loads(response.read())
+        data = json.loads(tmp)
     conn.close()
 
     return data
