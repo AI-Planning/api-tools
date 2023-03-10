@@ -104,6 +104,33 @@ def simple_query(qs):
     else:
         return res['result']
 
+def create_col(name, description, domain_set, ipc):
+    """Create a new collection in the database"""
+    attribute = ''  # Unknown for now
+    value = ''      # Same Unknown for now
+
+    params = {'user': USER_EMAIL,
+              'password': USER_TOKEN,
+              'ipc': ipc,
+              'desc': description,
+              'domain_set': domain_set
+    }
+    path = "/{}/create_collection/".format(name)
+    res = query(path,
+          qtype='POST',
+          offline=False,
+          format=''
+          )
+
+    if res['error']:
+        print ("Error: %s" % res['message'])
+    else:
+        print ("Result: %s" % str(res))
+
+def create_collection(name, description, domain_set, ipc):
+    """Creates a collection in the database with the corresponding information"""
+    create_col(name, description, domain_set, ipc)
+
 def get_version():
     """Return the current API version"""
     return str(query('/version')['version'])
