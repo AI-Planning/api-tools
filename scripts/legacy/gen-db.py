@@ -31,5 +31,5 @@ for dom in domains:
         for d in mod.domains:
             dbcode += '\n'
             dbcode += gen_js(d)
-print "\ndone_domains = %s\n" % str(done_domains)
+print ("\ndone_domains = %s\n" % str(done_domains))
 write_file('out.js.py', dbcode)

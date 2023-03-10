@@ -131,6 +131,36 @@ def find_collections(name):
     """Find the collections matching the string name"""
     return simple_query("/classical/collections/search?collection_name=%s" % name)
 
+
+def create_col(name, description, domain_set, ipc):
+    """Create a new collection in the database"""
+    attribute = ''  # Unknown for now
+    value = ''      # Same Unknown for now
+
+    params = {'user': USER_EMAIL,
+              'password': USER_TOKEN,
+              'ipc': ipc,
+              'desc': description,
+              'domain_set': domain_set
+    }
+    path = "/{}/create_collection/".format(name)
+    res = query(path,
+          qtype='POST',
+          offline=False,
+          format=''
+          )
+
+    if res['error']:
+        print ("Error: %s" % res['message'])
+    else:
+        print ("Result: %s" % str(res))
+
+
+def create_collection(name, description, domain_set, ipc):
+    """Creates a collection in the database with the corresponding information"""
+    create_col(name, description, domain_set, ipc)
+
+
 def update_collection_stat(cid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('collection', cid, attribute, value, description)
