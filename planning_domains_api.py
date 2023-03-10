@@ -118,6 +118,7 @@ def create_col(name, description, domain_set, ipc):
     path = "/{}/create_collection/".format(name)
     res = query(path,
           qtype='POST',
+          params = params,
           offline=False,
           format=''
           )
@@ -126,10 +127,6 @@ def create_col(name, description, domain_set, ipc):
         print ("Error: %s" % res['message'])
     else:
         print ("Result: %s" % str(res))
-
-def create_collection(name, description, domain_set, ipc):
-    """Creates a collection in the database with the corresponding information"""
-    create_col(name, description, domain_set, ipc)
 
 def get_version():
     """Return the current API version"""
