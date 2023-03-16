@@ -19,13 +19,12 @@ function formatProblemData(data){
     for (let index = 0; index < tags.length; index++) {
         tagstring += tags[index];
     }
-    console.log(tagstring);
     if(tagstring.length > 13){
         $("p.tags").html("Problem tags: " + tagstring);
     } else {
         $("p.tags").html("Problem tags: None");
     }
-    $("h4.d_link").html("<a href=\"http://api.planning.domains/json/classical/domain/"+data.domain_id+"\">"+data.domain+"</a>");
+    $("h4.d_link").html("<a href=\"domain.html?domain="+data.domain_id+"\">"+data.domain+"</a>");
     $("details.lowerbound").html("<summary>Lower bound: "+data.lower_bound+"</summary>"+data.lower_bound_description);
     $("details.upperbound").html("<summary>Upper bound: "+data.upper_bound+"</summary>"+data.upper_bound_description);
     $("details.av_ef_w").html("<summary>Average effective width: "+data.average_effective_width+"</summary>"+data.average_effective_width_description);
@@ -45,6 +44,12 @@ function formatDomainData(domain_data){
 
 function formatPlanData(plan_data){
     plan = plan_data.plan.split("\n");
+    console.log(plan);
+    if (plan[plan.length-2].includes("cost")){
+        $("h3.plan_moves").html("Plan (" + plan[plan.length-2].substring(9,) + ")");
+    } else {
+        $("h3.plan_moves").html("Plan ("+plan.length+")")
+    }
     plan = plan.map(x => x + "<br>")
     planstring = ""
     for (let index = 0; index < plan.length; index++) {
