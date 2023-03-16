@@ -12,7 +12,6 @@ function formatDomainData(data){
     $("p.id").html("Domain ID: "+data.domain_id);
     $("h1.title").html(data.domain_name);
     $("h3.desc").html(data.description);
-    //transcluded from problem.js
     d_tags = data.tags.substring(1, (data.tags.length-1));
     d_tags = d_tags.split(",").map(x => "<code>"+x.substring(2, x.length-1)+"</code>, ")
     d_tagstring = ""
