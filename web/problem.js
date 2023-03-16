@@ -44,7 +44,6 @@ function formatDomainData(domain_data){
 
 function formatPlanData(plan_data){
     plan = plan_data.plan.split("\n");
-    console.log(plan);
     if (plan[plan.length-2].includes("cost")){
         $("h3.plan_moves").html("Plan (" + plan[plan.length-2].substring(9,) + ")");
     } else {
