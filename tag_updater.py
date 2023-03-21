@@ -62,4 +62,4 @@ for collection in collections:
             update_tags("problem", problem['problem_id'], current=problem_current_tags, required=required_tags)
 
     collection_current_tags = ast.literal_eval(collection['tags'])
-    update_tags("domain", domain_id, current=collection_current_tags, required=list(collection_required_tags))
+    update_tags("collection", collection_id, current=collection_current_tags, required=list(collection_required_tags))
