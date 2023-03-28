@@ -5,6 +5,6 @@ This repository houses a collection of tools and scripts for interacting with th
 
 * **archive/**: A collection of scripts that are not currently supported, but may provide useful in the future.
 * **scripts/**: A collection of files used for extracting and generating information for the database.
-* **web/**: Javascript library for interacting with api.planning.domains in a plug-and-play fashion.
+* **web/**: Javascript library for interacting with api.planning.domains in a plug-and-play fashion. Also html views to the problems/domains/collections found on the api website.
 * **planning.domains.py**: A command-line utility for interacting with api.planning.domains (fetching the problems, querying the database, etc).
 * **planning_domains_api.py**: A python library providing query functionality to api.planning.domains.
