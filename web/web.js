@@ -169,6 +169,11 @@ function getDomains_collection(collectionno) {
         else
             data = data.result;
 
+        // sort based on the data[index].problem field
+        data.sort(function (a, b) {
+            return a.domain_name.localeCompare(b.domain_name);
+        });
+
         domainsListDivs = ""
         for (let index = 0; index < data.length; index++) {
             domainsListDivs += "<div class = domain" + index + "></div>";
