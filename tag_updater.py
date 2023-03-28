@@ -47,13 +47,6 @@ for collection in collections:
     for domain in domains:
         domain_id = domain['domain_id']
 
-        if domain_id == 80: # This domain 404's could not read parse domain reqs
-            continue
-        if domain_id == 21: # This domain is the settlers domain, and is not classical
-            continue
-        if domain_id == 145 or domain_id == 133: # These domains cannot be parsed with VAl because of the "?after" parsing bug
-            continue
-
         # pull pre-computed domain requirements
         required_tags = processed_requirements[str(domain_id)]['val']
 
