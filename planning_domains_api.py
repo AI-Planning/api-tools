@@ -125,8 +125,10 @@ def create_collection(name, description, tags, ipc, formalism):
 
     if res['error']:
         print ("Error: %s" % res['message'])
+        return []
     else:
         print ("Result: %s" % str(res))
+        return res['result']
 
 
 def get_version():
