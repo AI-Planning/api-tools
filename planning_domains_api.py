@@ -104,8 +104,7 @@ def change_tag(tag_type, iid, tid):
     else:
         print ("Result: %s" % str(res))
 
-def create_collection(name, description, tags, viz, ipc, formalism):
-    """Create a new collection in the database **Formatted for RDDL (2023-03-29)** """
+def create_collection(name, description, tags, ipc, formalism):
     attribute = ''  # Unknown for now
     value = ''      # Same Unknown for now
 
@@ -116,7 +115,6 @@ def create_collection(name, description, tags, viz, ipc, formalism):
               'ipc': ipc,
               'desc': description,
               'tags': tags,
-              'viz': viz
     }
     path = "/{}/collection".format(formalism)
     res = query(path,
