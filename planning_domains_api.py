@@ -41,7 +41,7 @@ def checkForDomainPath():
         USER_TOKEN = list(filter(lambda x: x.tag == 'token', installationSettings))[0].text
     return True
 
-def query(qs, qtype="GET", params={}, offline=False, format='/json', formalism = "/classical"):
+def query(qs, qtype="GET", params={}, offline=False, format='/json', formalism = "classical"):
 
     assert not offline, "Error: Offline mode is not supported currently."
 
