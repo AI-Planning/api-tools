@@ -68,7 +68,7 @@ def simple_query(qs, form):
     else:
         return res['result']
 
-def update_stat(stat_type, iid, attribute, value, description):
+def update_stat(stat_type, iid, attribute, value, description, form):
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
@@ -80,14 +80,15 @@ def update_stat(stat_type, iid, attribute, value, description):
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='')
+                format='',
+                formalism = form)
 
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
         print ("Result: %s" % str(res))
 
-def change_tag(tag_type, iid, tid):
+def change_tag(tag_type, iid, tid, form):
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
@@ -97,30 +98,32 @@ def change_tag(tag_type, iid, tid):
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='')
+                format='',
+                formalism = form)
 
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
         print ("Result: %s" % str(res))
 
-def create_collection(name, description, tags, ipc, formalism):
+def create_collection(name, description, tags, ipc, form):
     attribute = ''  # Unknown for now
     value = ''      # Same Unknown for now
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
-              'formalism': formalism,
+              'formalism': form,
               'name': name,
               'ipc': ipc,
               'desc': description,
               'tags': tags,
     }
-    path = "/{}/collection".format(formalism)
+    path = "/{}/collection".format(form)
     res = query(path,
           qtype='POST',
           params = params,
-          offline=False
+          offline=False,
+          formalism = form
           )
 
     if res['error']:
@@ -133,17 +136,17 @@ def create_collection(name, description, tags, ipc, formalism):
 
 def get_version():
     """Return the current API version"""
-    return str(query('/version')['version'])
+    return str(query('/version')['version'], formalism = "")
 
 
-def get_tags():
+def get_tags(form):
     """Get the list of available tags"""
-    return {t['name']: t['description'] for t in simple_query("/classical/tags")}
+    return {t['name']: t['description'] for t in simple_query("/tags", formalism = form)}
 
 
-def get_collections(ipc = None):
+def get_collections(form, ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
-    res = query('/collections/')
+    res = query('/collections/', formalism=form)
     if res['error']:
         print ("Error: %s" % res['message'])
         return []
@@ -153,29 +156,29 @@ def get_collections(ipc = None):
         else:
             return res['result']
 
-def get_collection(cid):
+def get_collection(cid, form):
     """Return the collection of a given id"""
-    return simple_query("/collection/%d" % cid)
+    return simple_query("/collection/%d" % cid, form)
 
-def find_collections(name):
+def find_collections(name, form):
     """Find the collections matching the string name"""
-    return simple_query("/collections/search?collection_name=%s" % name)
+    return simple_query("/collections/search?collection_name=%s" % name, form)
 
-def update_collection_stat(cid, attribute, value, description):
+def update_collection_stat(cid, attribute, value, description, form):
     """Update the attribute stat with a given value and description"""
-    update_stat('collection', cid, attribute, value, description)
+    update_stat('collection', cid, attribute, value, description, formalism = form)
 
-def tag_collection(cid, tagname):
+def tag_collection(cid, tagname, form):
     """Tag the collection with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags")}
+    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
         change_tag("tagcollection", cid, tag2id[tagname])
 
-def untag_collection(cid, tagname):
+def untag_collection(cid, tagname, form):
     """Remove a given tag from a collection"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags")}
+    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
@@ -183,85 +186,85 @@ def untag_collection(cid, tagname):
 
 
 
-def get_domains(cid):
+def get_domains(cid, form):
     """Return the set of domains for a given collection id"""
-    return simple_query("/domains/%d" % cid)
+    return simple_query("/domains/%d" % cid, formalism = form)
 
-def get_domain(did):
+def get_domain(did, form):
     """Return the domain for a given domain id"""
-    return simple_query("/domain/%d" % did)
+    return simple_query("/domain/%d" % did, formalism = form)
 
-def find_domains(name):
+def find_domains(name, form):
     """Return the domains matching the string name"""
-    return simple_query("/domains/search?domain_name=%s" % name)
+    return simple_query("/domains/search?domain_name=%s" % name, form)
 
 def update_domain_stat(did, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('domain', did, attribute, value, description)
 
-def tag_domain(did, tagname):
+def tag_domain(did, tagname, form):
     """Tag the domain with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags")}
+    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
         change_tag("tagdomain", did, tag2id[tagname])
 
-def untag_domain(did, tagname):
+def untag_domain(did, tagname, form):
     """Remove a given tag from a domain"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags")}
+    tag2id = {t['name']: t['id'] for t in simple_query("/tags", form)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
         change_tag("untagdomain", did, tag2id[tagname])
 
 
-def get_problems(did):
+def get_problems(did, form):
     """Return the set of problems for a given domain id"""
-    return map(localize, simple_query("/problems/%d" % did))
+    return map(localize, simple_query("/problems/%d" % did, formalism = form))
 
-def get_problem(pid):
+def get_problem(pid, form):
     """Return the problem for a given problem id"""
-    return localize(simple_query("/problem/%d" % pid))
+    return localize(simple_query("/problem/%d" % pid, formalism = form))
 
-def find_problems(name):
+def find_problems(name, form):
     """Return the problems matching the string name"""
-    return list(map(localize, simple_query("/problems/search?problem_name=%s" % name)))
+    return list(map(localize, simple_query("/problems/search?problem_name=%s" % name, formalism = form)))
 
 def update_problem_stat(pid, attribute, value, description):
     """Update the attribute stat with a given value and description"""
     update_stat('problem', pid, attribute, value, description)
 
-def get_null_attribute_problems(attribute):
+def get_null_attribute_problems(attribute, form):
     """Fetches all of the problems that do not have the attribute set yet"""
     return {i['id']: (i['domain_path'], i['problem_path'])
-            for i in map(localize, simple_query("/nullattribute/%s" % attribute))}
+            for i in map(localize, simple_query("/nullattribute/%s" % attribute, formalism = form))}
 
-def tag_problem(pid, tagname):
+def tag_problem(pid, tagname, form):
     """Tag the problem with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags")}
+    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
         change_tag("tagproblem", pid, tag2id[tagname])
 
-def untag_problem(pid, tagname):
+def untag_problem(pid, tagname, form):
     """Remove a given tag from a problem"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags")}
+    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
         change_tag("untagproblem", pid, tag2id[tagname])
 
-def get_plan(pid):
+def get_plan(pid, form):
     """Return the existing plan for a problem if it exists"""
-    res = simple_query("/plan/%d" % pid) 
+    res = simple_query("/plan/%d" % pid, formalism = form) 
     if res:
         return res['plan'].strip()
     return res
 
 
-def submit_plan(pid, plan):
+def submit_plan(pid, plan, form):
     """Submit the provided plan for validation and possible storage"""
 
     params = {'plan': plan, 'email': USER_EMAIL}
@@ -270,7 +273,8 @@ def submit_plan(pid, plan):
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='')
+                format='',
+                formalism = form)
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
