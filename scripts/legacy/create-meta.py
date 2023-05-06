@@ -14,7 +14,7 @@ def get_name(dom):
     #if '-' in name:
     #    print "Check name: %s" % name
     if '' == name:
-        print "Error: empty name from %s" % dom
+        print ("Error: empty name from %s" % dom)
     return name
 
 
@@ -70,7 +70,7 @@ def handle_single(dom):
     #print towrite
     #print "-------\n"
 
-    print "Handling single domain: %s" % dom
+    print ("Handling single domain: %s" % dom)
     write_file(dom+'/api.py', towrite)
 
 
@@ -93,12 +93,12 @@ def handle_double(dom):
             return toret
         dmap = {remdom(d): d for d in domfiles}
         if all([k in prbfiles for k in dmap]):
-            print "Handling multi-domain: %s" % dom
+            print ("Handling multi-domain: %s" % dom)
             assert len(set(dmap.keys())) == len(set(prbfiles))
             domdata['problems'] = [(dmap[prob][2:], prob[2:]) for prob in sorted(prbfiles)]
             domdata['ipc'] = ipc_map.get(dom[2:])
         elif dom in ['./psr-small', './airport']:
-            print "Handling custom 50-problem domain: %s" % dom
+            print ("Handling custom 50-problem domain: %s" % dom)
             assert 100 == len(get_file_list(dom, match_list=['pddl'], forbidden_list=forbidden_files))
             probs = []
             for i in range(1,51):
@@ -110,10 +110,10 @@ def handle_double(dom):
             domdata['problems'] = sorted(probs)
             domdata['ipc'] = ipc_map.get(dom[2:])
         else:
-            print "Unhandled balanced multi-domain: %s" % dom
+            print ("Unhandled balanced multi-domain: %s" % dom)
             return
     else:
-        print "Unhandled lopsided multi-domain: %s" % dom
+        print ("Unhandled lopsided multi-domain: %s" % dom)
 
 
     towrite += pprint.pformat(domdata)
@@ -143,23 +143,23 @@ for dom in domains:
             single_dom.append(dom)
             for i in get_file_list(dom, forbidden_list=forbidden_files+['/domain.pddl']):
                 if 'dom' in i.split('/')[-1]:
-                    print "Warning: Double domain in %s must be handled." % dom
+                    print ("Warning: Double domain in %s must be handled." % dom)
         else:
             multi_dom.append(dom)
         os.system("touch %s/__init__.py" % dom)
 
-print "\nSingle doms: %d" % len(single_dom)
-print map(get_name, single_dom)
-print "\nMulti doms: %d" % len(multi_dom)
-print map(get_name, multi_dom)
-print "\nDone doms: %d" % len(done_dom)
-print map(get_name, done_dom)
-print
+print ("\nSingle doms: %d" % len(single_dom))
+print (map(get_name, single_dom))
+print ("\nMulti doms: %d" % len(multi_dom))
+print (map(get_name, multi_dom))
+print ("\nDone doms: %d" % len(done_dom))
+print (map(get_name, done_dom))
+print ()
 
 for ipc in ipcs:
     for dom in ipc:
         if not os.path.isdir('./'+dom):
-            print "Bad dom: %s" % dom
+            print ("Bad dom: %s" % dom)
 
 for dom in single_dom:
     handle_single(dom)
