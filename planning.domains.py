@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-from __future__ import print_function
-
-import sys, os, pprint
+import argparse, os, pprint, sys
 
 import xml.etree.ElementTree as etree
 
@@ -300,6 +298,73 @@ if __name__ == "__main__":
     if installationSettings is None:
         print("Fatal error: could not establish installation settings")
         exit(1)
+
+
+    parser = argparse.ArgumentParser(description="Planning Domains CLI")
+    subparsers = parser.add_subparsers(dest="command")
+
+    def add_formalism_argument(subparser):
+        subparser.add_argument("--formalism", choices=["classical", "rddl"], default="classical", help="Specify the formalism for the command.")
+
+    # Update
+    update_parser = subparsers.add_parser("update", help="Update the local domain repository.")
+
+    # Register
+    register_parser = subparsers.add_parser("register", help="Register your email and token for making API edits.")
+
+    # Find
+    find_parser = subparsers.add_parser("find", help="Find collections, domains, or problems whose title/ID contains a string.")
+    find_parser.add_argument("--type", choices=["collections", "domains", "problems"], help="Type of item to find.")
+    find_parser.add_argument("string", help="String to search for in the titles/IDs.")
+    add_formalism_argument(find_parser)
+
+    # Show
+    show_parser = subparsers.add_parser("show", help="Find and show collections, domains, problems, or plans with a specific ID.")
+    show_parser.add_argument("--type", choices=["collection", "domain", "problem", "plan"], help="Type of item to show.")
+    show_parser.add_argument("--id", type=int, help="ID of the item to show.")
+    add_formalism_argument(show_parser)
+
+    # List
+    list_parser = subparsers.add_parser("list", help="Lists collections, tags, or problems with a null attribute setting.")
+    list_parser.add_argument("--type", choices=["collections", "tags", "null-attribute"], help="Type of items to list.")
+    list_parser.add_argument("--attribute", nargs="?", default=None, help="Attribute setting to search for (only for null-attribute).")
+    add_formalism_argument(list_parser)
+
+    # Tag
+    tag_parser = subparsers.add_parser("tag", help="Tag a collection, domain, or problem with a specific tag.")
+    tag_parser.add_argument("--type", choices=["collection", "domain", "problem"], help="Type of item to tag.")
+    tag_parser.add_argument("--id", type=int, help="ID of the item to tag.")
+    tag_parser.add_argument("--tag", help="Tag to add to the item.")
+    add_formalism_argument(tag_parser)
+
+    # Untag
+    untag_parser = subparsers.add_parser("untag", help="Untag a collection, domain, or problem with a specific tag.")
+    untag_parser.add_argument("--type", choices=["collection", "domain", "problem"], help="Type of item to untag.")
+    untag_parser.add_argument("--id", type=int, help="ID of the item to untag.")
+    untag_parser.add_argument("--tag", help="Tag to remove from the item.")
+    add_formalism_argument(untag_parser)
+
+    # Submit plan
+    submit_plan_parser = subparsers.add_parser("submit_plan", help="Submit the provided plan for validation and possible storage.")
+    submit_plan_parser.add_argument("--id", type=int, help="Problem ID for which the plan is provided.")
+    submit_plan_parser.add_argument("--plan", type=argparse.FileType("r"), help="File containing the plan to submit.")
+    add_formalism_argument(submit_plan_parser)
+
+    # Cache
+    cache_parser = subparsers.add_parser("cache", help="Collect all of the domains in a collection into a specified folder.")
+    cache_parser.add_argument("--id", type=int, help="Collection ID to cache.")
+    cache_parser.add_argument("--folder", help="Folder to store the cached collection.")
+
+    # Cache-all
+    cache_all_parser = subparsers.add_parser("cache_all", help="Collect all domains in a collection into a specified folder, including problem data and statistics.")
+    cache_all_parser.add_argument("--id", type=int, help="Collection ID to cache.")
+    cache_all_parser.add_argument("--folder", help="Folder to store the cached collection and problem data/statistics.")
+
+    args = parser.parse_args()
+
+    print("Parsing details:")
+    print(args)
+    exit(0)
 
 
     if len(sys.argv) == 1:
