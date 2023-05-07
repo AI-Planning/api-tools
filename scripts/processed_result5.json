@@ -1,0 +1,1540 @@
+{
+  "63": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "83": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "99": {
+    "stated": [
+      ":adl",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  },
+  "17": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "12": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "22": {
+    "stated": [
+      ":equality",
+      ":action-costs"
+    ],
+    "val": [
+      ":equality",
+      ":action-costs"
+    ]
+  },
+  "16": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "15": {
+    "stated": [
+      ":adl",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  },
+  "87": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "19": {
+    "stated": [
+      ":strips",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "8": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "5": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "4": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "13": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "11": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "25": {
+    "stated": [
+      ":strips",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "9": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "51": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "96": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "40": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "78": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "102": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "27": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "56": {
+    "stated": [
+      ":typing",
+      ":equality",
+      ":negative-preconditions",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "39": {
+    "stated": [
+      ":typing",
+      ":equality",
+      ":negative-preconditions",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "62": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "103": {
+    "stated": [
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "72": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "115": {
+    "stated": [
+      ":typing",
+      ":equality",
+      ":negative-preconditions",
+      ":action-costs",
+      ":conditional-effects"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "84": {
+    "stated": [
+      ":strips",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "67": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "49": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "54": {
+    "stated": [
+      ":strips",
+      ":equality",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":equality"
+    ]
+  },
+  "94": {
+    "stated": [
+      ":typing",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions"
+    ]
+  },
+  "118": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "57": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "90": {
+    "stated": [
+      ":strips",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "110": {
+    "stated": [
+      ":adl"
+    ],
+    "val": [
+      ":adl"
+    ]
+  },
+  "100": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "112": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "68": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "113": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "119": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "44": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "61": {
+    "stated": [
+      ":adl"
+    ],
+    "val": [
+      ":adl"
+    ]
+  },
+  "91": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "82": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "32": {
+    "stated": [
+      ":equality",
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "45": {
+    "stated": [
+      ":typing",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions"
+    ]
+  },
+  "77": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "98": {
+    "stated": [
+      ":typing",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "86": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "35": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "81": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "52": {
+    "stated": [
+      ":equality",
+      ":action-costs"
+    ],
+    "val": [
+      ":equality",
+      ":action-costs"
+    ]
+  },
+  "60": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "121": {
+    "stated": [],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "122": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "126": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "127": {
+    "stated": [],
+    "val": [
+      ":strips"
+    ]
+  },
+  "107": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "101": {
+    "stated": [
+      ":negative-preconditions",
+      ":equality"
+    ],
+    "val": [
+      ":equality"
+    ]
+  },
+  "117": {
+    "stated": [
+      ":typing",
+      ":equality",
+      ":negative-preconditions",
+      ":action-costs",
+      ":conditional-effects"
+    ],
+    "val": [
+      ":equality",
+      ":conditional-effects",
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "88": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "120": {
+    "stated": [
+      ":adl",
+      ":typing",
+      ":conditional-effects"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects"
+    ]
+  },
+  "114": {
+    "stated": [
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "97": {
+    "stated": [
+      ":strips",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "6": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "123": {
+    "stated": [
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions",
+      ":conditional-effects"
+    ]
+  },
+  "124": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "129": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "47": {
+    "stated": [
+      ":adl",
+      ":typing",
+      ":conditional-effects"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects"
+    ]
+  },
+  "28": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "26": {
+    "stated": [
+      ":typing",
+      ":action-costs",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "30": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "33": {
+    "stated": [
+      ":equality",
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "128": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "14": {
+    "stated": [
+      ":strips",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "79": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "80": {
+    "val": [
+      ":action-costs"
+    ]
+  },
+  "58": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "23": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "59": {
+    "stated": [
+      ":typing",
+      ":adl",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "111": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "31": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "29": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "55": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "46": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "65": {
+    "stated": [
+      ":typing",
+      ":adl",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "20": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "69": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":equality"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions"
+    ]
+  },
+  "53": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "85": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "7": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "38": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "18": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "106": {
+    "stated": [
+      ":equality",
+      ";;",
+      "equality",
+      "needed",
+      "for",
+      "blocked",
+      "transition",
+      "in",
+      "case",
+      "of",
+      "a",
+      "mismatch",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":derived-predicates",
+      ":equality",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "89": {
+    "stated": [
+      ":strips",
+      ":equality",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":equality"
+    ]
+  },
+  "71": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "109": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":equality"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions"
+    ]
+  },
+  "116": {
+    "stated": [
+      ":typing",
+      ":equality"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "48": {
+    "stated": [
+      ":adl",
+      ":derived-predicates"
+    ],
+    "val": [
+      ":equality",
+      ":typing",
+      ":derived-predicates",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "75": {
+    "stated": [
+      ":typing",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "76": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "70": {
+    "stated": [
+      ":typing",
+      ":equality"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "64": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "73": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "74": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "41": {
+    "stated": [
+      ":adl",
+      ":derived-predicates"
+    ],
+    "val": [
+      ":equality",
+      ":typing",
+      ":derived-predicates",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "104": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "138": {
+    "stated": [
+      ":strips",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":equality",
+      ":negative-preconditions"
+    ]
+  },
+  "92": {
+    "stated": [
+      ":equality",
+      ";;",
+      "equality",
+      "needed",
+      "for",
+      "blocked",
+      "transition",
+      "in",
+      "case",
+      "of",
+      "a",
+      "mismatch",
+      ":typing"
+    ],
+    "val": [
+      ":negative-preconditions",
+      ":disjunctive-preconditions",
+      ":derived-predicates",
+      ":typing",
+      ":equality"
+    ]
+  },
+  "125": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":quanitfied-precondition"
+    ],
+    "val": [
+      ":typing",
+      ":disjunctive-preconditions",
+      ":negative-preconditions"
+    ]
+  },
+  "50": {
+    "stated": [
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":strips"
+    ]
+  },
+  "37": {
+    "stated": [
+      ":adl",
+      ":typing"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  },
+  "43": {
+    "stated": [
+      ":strips"
+    ],
+    "val": [
+      ":strips"
+    ]
+  },
+  "66": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "42": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "95": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "93": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "24": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "34": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "10": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "150": {
+    "stated": [
+      ":strips",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":equality",
+      ":negative-preconditions"
+    ]
+  },
+  "142": {
+    "stated": [
+      ":typing",
+      ":action-costs",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "36": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "108": {
+    "stated": [
+      ":typing",
+      ":action-costs"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "105": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":equality"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions"
+    ]
+  },
+  "130": {
+    "stated": [
+      ":typing",
+      ":action-costs",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "146": {
+    "stated": [
+      ":typing",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  },
+  "140": {
+    "stated": [
+      ":typing",
+      ":conditional-effects",
+      ":action-costs",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "136": {
+    "stated": [
+      ":adl",
+      ":action-costs",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":action-costs"
+    ]
+  },
+  "133": {
+      "stated": [
+        ":adl",
+        ":typing",
+        ":negative-preconditions",
+        ":equality",
+        ":action-costs"
+      ],
+      "val": [
+        ":typing",
+        ":negative-preconditions",
+        ":action-costs"
+      ]
+  },
+  "141": {
+    "stated": [
+      ":typing",
+      ":equality"
+    ],
+    "val": [
+      ":typing",
+      ":action-costs"
+    ]
+  },
+  "139": {
+    "stated": [
+      ":typing",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions"
+    ]
+  },
+  "135": {
+    "stated": [
+      ":typing",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  },
+  "134": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":equality",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":equality"
+    ]
+  },
+  "145": {
+      "stated": [
+        ":adl",
+        ":typing",
+        ":negative-preconditions",
+        ":equality",
+        ":action-costs"
+      ],
+      "val": [
+        ":typing",
+        ":negative-preconditions",
+        ":action-costs"
+      ]
+  },
+  "153": {
+    "stated": [
+      ":action-costs",
+      ":conditional-effects",
+      ":typing",
+      ":negative-preconditions",
+      ":adl"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions",
+      ":conditional-effects",
+      ":action-costs"
+    ]
+  },
+  "144": {
+    "stated": [
+      ":adl",
+      ":action-costs"
+    ],
+    "val": [
+      ":equality",
+      ":conditional-effects",
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "147": {
+    "stated": [
+      ":strips",
+      ":typing",
+      ":equality",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":equality"
+    ]
+  },
+  "148": {
+    "stated": [
+      ":adl",
+      ":action-costs",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":action-costs"
+    ]
+  },
+  "149": {
+    "stated": [
+      ":typing",
+      ":negative-preconditions",
+      ":conditional-effects"
+    ],
+    "val": [
+      ":equality",
+      ":conditional-effects",
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "151": {
+    "stated": [
+      ":typing",
+      ":conditional-effects",
+      ":action-costs",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "152": {
+    "stated": [
+      ":typing",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":negative-preconditions"
+    ]
+  },
+  "132": {
+    "stated": [
+      ":adl",
+      ":action-costs"
+    ],
+    "val": [
+      ":equality",
+      ":conditional-effects",
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "131": {
+    "stated": [
+      ":equality",
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  },
+  "137": {
+    "stated": [
+      ":typing",
+      ":negative-preconditions",
+      ":conditional-effects"
+    ],
+    "val": [
+      ":equality",
+      ":conditional-effects",
+      ":typing",
+      ":negative-preconditions",
+      ":action-costs"
+    ]
+  },
+  "143": {
+    "stated": [
+      ":equality",
+      ":typing",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ],
+    "val": [
+      ":typing",
+      ":equality",
+      ":conditional-effects",
+      ":negative-preconditions"
+    ]
+  }
+}
