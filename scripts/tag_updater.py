@@ -1,3 +1,9 @@
+
+import os, sys
+
+# Add parent directory to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import json
 import planning_domains_api as api
 import ast
@@ -6,14 +12,16 @@ import ast
 f = open("processed_result5.json")
 processed_requirements = json.load(f)
 
-DEBUG = True
+DEBUG = False
+
 
 def update_tags(resource, id, *, current, required):
-    assert resource in ["collection", "domain", "problem"]   
+    assert resource in ["collection", "domain", "problem"]
 
     # Remove incorrect tags
     for tag in current:
         if tag not in required:
+            print(f"Untagging {tag} from {resource}: {id}")
             if DEBUG:
                 print(f"Untagging {tag} from {resource}: {id}")
             elif resource == "collection":
@@ -26,6 +34,7 @@ def update_tags(resource, id, *, current, required):
     # Add required tags
     for tag in required:
         if tag not in current:
+            print(f"Tagging {tag} from {resource}: {id}")
             if DEBUG:
                 print(f"Tagging {tag} from {resource}: {id}")
             elif resource == "collection":
@@ -34,6 +43,7 @@ def update_tags(resource, id, *, current, required):
                 api.tag_domain(id, tag)
             elif resource == "problem":
                 api.tag_problem(id, tag)
+
 
 collections = api.get_collections()
 for collection in collections:
@@ -63,3 +73,11 @@ for collection in collections:
 
     collection_current_tags = ast.literal_eval(collection['tags'])
     update_tags("collection", collection_id, current=collection_current_tags, required=list(collection_required_tags))
+
+
+# import requests
+# for cid in range(1, 5002):
+#     # post to api.planning.domains/rebuildtags/domain/<did>
+#     print(f"Rebuilding tags for collection {cid}")
+#     requests.post(f"https://api.planning.domains/rebuildtags/problem/{cid}")
+
