@@ -16,38 +16,6 @@ userToken = None
 
 defaultNamespace = "http://settings.planning.domains"
 
-USAGE_STRING = """
-No command-line options given.  Usage:
-
-planning.domains.py update                                Update the local domain repository.
-
-planning.domains.py register                              Register your email and token for making API edits
-
-planning.domains.py find collections [string]             Find collections whose title/ID contains 'string'
-planning.domains.py find domains [string]                 Find domains whose title/ID contains 'string'
-planning.domains.py find problems [string]                Find problems whose title/ID contains 'string'
-
-planning.domains.py show collection [integer]             Find collections whose title/ID contains 'integer'
-planning.domains.py show domain [integer]                 Find domains whose title/ID contains 'integer'
-planning.domains.py show problem [integer]                Find problems whose title/ID contains 'integer'
-planning.domains.py show plan [integer]                   Show the plan (if any) matching the given problem ID
-
-planning.domains.py list collections                      Lists all of the collections.
-planning.domains.py list tags                             Lists all of the available tags.
-planning.domains.py list null-attribute [string]          Lists all of the problems that have a null attribute setting (string)
-
-planning.domains.py tag collection [integer] [string]     Tags the specified collection (integer) with a tag (string)
-planning.domains.py tag domain [integer] [string]         Tags the specified domain (integer) with a tag (string)
-planning.domains.py tag problem [integer] [string]        Tags the specified problem (integer) with a tag (string)
-planning.domains.py untag collection [integer] [string]   Un-tags the specified collection (integer) with a tag (string)
-planning.domains.py untag domain [integer] [string]       Un-tags the specified domain (integer) with a tag (string)
-planning.domains.py untag problem [integer] [string]      Un-tags the specified problem (integer) with a tag (string)
-
-planning.domains.py submit plan [integer] [plan file]     Submit the provided plan for validation and possible storage
-
-planning.domains.py cache [integer] [string]              Collect all of the domains in a collection (integer) into a specified folder (string)
-planning.domains.py cache-all [integer] [string]          Same as previous, but also includes the problem data / statistics
-"""
 
 
 def checkExists(pd_dir):
@@ -186,36 +154,36 @@ def register():
     print("Email and token settings saved!\n")
 
 
-def find(sub, arg):
+def find(sub, arg, form):
     """Find an object of type sub that matches argument arg."""
 
     if sub == 'collections':
-        res = api.find_collections(arg)
+        res = api.find_collections(arg, form)
     elif sub == 'domains':
-        res = api.find_domains(arg)
+        res = api.find_domains(arg, form)
     elif sub == 'problems':
-        res = api.find_problems(arg)
+        res = api.find_problems(arg, form)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
 
     pprint.pprint(res, sort_dicts=False)
 
-def show(sub, arg):
+def show(sub, arg, form):
     """Show an object of type sub that matches the id arg."""
 
     arg = int(arg)
 
     if sub == 'plan':
-        print(api.get_plan(arg))
+        print(api.get_plan(arg, form))
         return
 
     if sub == 'collection':
-        res = api.get_collection(arg)
+        res = api.get_collection(arg, form)
     elif sub == 'domain':
-        res = api.get_domain(arg)
+        res = api.get_domain(arg, form)
     elif sub == 'problem':
-        res = api.get_problem(arg)
+        res = api.get_problem(arg, form)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
@@ -315,7 +283,7 @@ if __name__ == "__main__":
     # Find
     find_parser = subparsers.add_parser("find", help="Find collections, domains, or problems whose title/ID contains a string.")
     find_parser.add_argument("--type", choices=["collections", "domains", "problems"], help="Type of item to find.")
-    find_parser.add_argument("string", help="String to search for in the titles/IDs.")
+    find_parser.add_argument("--query", help="String to search for in the titles/IDs.")
     add_formalism_argument(find_parser)
 
     # Show
@@ -345,7 +313,7 @@ if __name__ == "__main__":
     add_formalism_argument(untag_parser)
 
     # Submit plan
-    submit_plan_parser = subparsers.add_parser("submit_plan", help="Submit the provided plan for validation and possible storage.")
+    submit_plan_parser = subparsers.add_parser("submit-plan", help="Submit the provided plan for validation and possible storage.")
     submit_plan_parser.add_argument("--id", type=int, help="Problem ID for which the plan is provided.")
     submit_plan_parser.add_argument("--plan", type=argparse.FileType("r"), help="File containing the plan to submit.")
     add_formalism_argument(submit_plan_parser)
@@ -356,179 +324,134 @@ if __name__ == "__main__":
     cache_parser.add_argument("--folder", help="Folder to store the cached collection.")
 
     # Cache-all
-    cache_all_parser = subparsers.add_parser("cache_all", help="Collect all domains in a collection into a specified folder, including problem data and statistics.")
+    cache_all_parser = subparsers.add_parser("cache-all", help="Collect all domains in a collection into a specified folder, including problem data and statistics.")
     cache_all_parser.add_argument("--id", type=int, help="Collection ID to cache.")
     cache_all_parser.add_argument("--folder", help="Folder to store the cached collection and problem data/statistics.")
 
     args = parser.parse_args()
 
-    print("Parsing details:")
-    print(args)
-    exit(0)
-
-
-    if len(sys.argv) == 1:
-        print(USAGE_STRING)
+    if args.command is None:
+        parser.print_help()
         exit(0)
 
-
-    root = None
-
-    i = 1
-
-    while i < len(sys.argv):
-        if sys.argv[i] == "update":
-            if api.checkForDomainPath():
-                print("Updating...")
-                os.system("cd {0}; git pull".format(api.DOMAIN_PATH))
-            else:
-                print("Error: Domain path is not set.")
-
-            i += 1
-
-        elif sys.argv[i] == 'cache':
-            i += 1
-
-            try:
-                cid = int(sys.argv[i].strip())
-                i += 1
-                outdir = sys.argv[i].strip()
-                i += 1
-            except:
-                print("Must provide a valid collection ID and filename.")
-                exit(1)
-
-            cache(cid, outdir)
-
-        elif sys.argv[i] == 'cache-all':
-            i += 1
-
-            try:
-                cid = int(sys.argv[i].strip())
-                i += 1
-                outdir = sys.argv[i].strip()
-                i += 1
-            except:
-                print("Must provide a valid collection ID and filename.")
-                exit(1)
-
-            cache(cid, outdir, True)
-
-        elif sys.argv[i] == 'register':
-            register()
-            i += 1
-
-        elif sys.argv[i] == 'submit':
-            i += 1
-
-            sub = sys.argv[i].strip()
-            i += 1
-
-            if sub == 'plan':
-
-                pid = int(sys.argv[i].strip())
-                i += 1
-
-                pfile = sys.argv[i].strip()
-                i += 1
-
-                submit_plan(pid, pfile)
-            else:
-                print("Error: unknown submission type {0}".format(sub))
-
-        elif sys.argv[i] == 'list':
-            i += 1
-
-            sub = sys.argv[i].strip()
-            i += 1
-
-            if sub == 'tags':
-                print("{0}\t{1}\n".format('Tag Name'.rjust(26), 'Description'))
-                tags = api.get_tags()
-                for t in sorted(tags.keys()):
-                    print("{0}\t{1}".format(t.rjust(26), tags[t]))
-                print()
-            elif sub == 'collections':
-                cols = {c['collection_id']: c for c in api.get_collections()}
-                for cid in sorted(cols.keys()):
-                    c = cols[cid]
-                    print()
-                    print("         ID: {0}".format(c['collection_id']))
-                    print("       Name: {0}".format(c['collection_name']))
-                    print("      #Doms: {0}".format(len(c['domain_set'])))
-                    print("Description: {0}".format(c['description']))
-                print()
-            elif sub == 'null-attribute':
-                attribute = sys.argv[i].strip()
-                i += 1
-                nullprobs = api.get_null_attribute_problems(attribute)
-                if len(nullprobs) < 25:
-                    pprint.pprint(nullprobs)
-                else:
-                    print("{0} problems have {1} set to null. 10 examples:\n".format(len(nullprobs), attribute))
-                    print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in list(nullprobs.keys())[:10]]))
-                    print(' - ...')
-            else:
-                print("Error: unknown list type {0}".format(sub))
-                exit(1)
+    # update
+    if args.command == "update":
+        if api.checkForDomainPath():
+            print("Updating...")
+            os.system("cd {0}; git pull".format(api.DOMAIN_PATH))
         else:
+            print("Error: Domain path is not set.")
 
-            command = sys.argv[i]
-            i += 1
+    # cache
+    elif args.command == "cache":
+        if args.id is None or args.folder is None:
+            print("Error: Must provide a collection ID and folder name.")
+            exit(1)
+        cache(args.id, args.folder)
 
-            if i == len(sys.argv):
-                print("Error: expected a sub-command after {0}".format(command))
+    # cache-all
+    elif args.command == "cache-all":
+        if args.id is None or args.folder is None:
+            print("Error: Must provide a collection ID and folder name.")
+            exit(1)
+        cache(args.id, args.folder, True)
+
+
+    # register
+    elif args.command == "register":
+        register()
+
+    # submit
+    elif args.command == "submit-plan":
+        if args.id is None or args.plan is None:
+            print("Error: Must provide a problem ID and plan file.")
+            exit(1)
+        submit_plan(args.id, args.plan)
+
+    # list
+    elif args.command == "list":
+        if args.type is None:
+            print("Error: Must provide a list type.")
+            exit(1)
+        if args.type == "tags":
+            print("{0}\t{1}\n".format('Tag Name'.rjust(26), 'Description'))
+            tags = api.get_tags()
+            for t in sorted(tags.keys()):
+                print("{0}\t{1}".format(t.rjust(26), tags[t]))
+            print()
+        elif args.type == "collections":
+            cols = {c['collection_id']: c for c in api.get_collections()}
+            for cid in sorted(cols.keys()):
+                c = cols[cid]
+                print()
+                print("         ID: {0}".format(c['collection_id']))
+                print("       Name: {0}".format(c['collection_name']))
+                print("      #Doms: {0}".format(len(c['domain_set'])))
+                print("Description: {0}".format(c['description']))
+            print()
+        elif args.type == "null-attribute":
+            if args.attribute is None:
+                print("Error: Must provide an attribute name.")
                 exit(1)
-
-            subcommand = sys.argv[i]
-            i += 1
-
-            if i == len(sys.argv):
-                print("Error: expected an argument after {0}".format(subcommand))
-                exit(1)
-
-            argument = sys.argv[i]
-            i += 1
-
-            argument = argument.rstrip()
-            argument = argument.lstrip()
-
-            if len(argument) == 0:
-                print("Warning: expected non-empty argument after {0}".format(command))
-                continue
-
-            if command == "find":
-                find(subcommand, argument)
-            elif command == "show":
-                show(subcommand, argument)
-            elif command in ["tag", "untag"]:
-
-                iid = int(argument)
-
-                if i == len(sys.argv):
-                    print("Error: expected a tag name")
-                    exit(1)
-                tag = sys.argv[i]
-                i += 1
-
-                if 'tag' == command and 'collection' == subcommand:
-                    api.tag_collection(iid, tag)
-                elif 'tag' == command and 'domain' == subcommand:
-                    api.tag_domain(iid, tag)
-                elif 'tag' == command and 'problem' == subcommand:
-                    api.tag_problem(iid, tag)
-                elif 'untag' == command and 'collection' == subcommand:
-                    api.untag_collection(iid, tag)
-                elif 'untag' == command and 'domain' == subcommand:
-                    api.untag_domain(iid, tag)
-                elif 'untag' == command and 'problem' == subcommand:
-                    api.untag_problem(iid, tag)
-                else:
-                    print("Error: can only (un)tag a collection, domain, or problem")
-                    exit(1)
+            nullprobs = api.get_null_attribute_problems(args.attribute)
+            if len(nullprobs) < 25:
+                pprint.pprint(nullprobs)
             else:
-                print("Error: unknown command {0}".format(command))
-                exit(1)
+                print("{0} problems have {1} set to null. 10 examples:\n".format(len(nullprobs), args.attribute))
+                print('\n'.join([" - {0}: {1}".format(i, nullprobs[i]) for i in list(nullprobs.keys())[:10]]))
+                print(' - ...')
+        else:
+            print("Error: Unknown list type.")
+            exit(1)
+
+    # find
+    elif args.command == "find":
+        if args.type is None or args.query is None:
+            print("Error: Must provide a search type and query.")
+            exit(1)
+        find(args.type, args.query, args.formalism)
+
+    # show
+    elif args.command == "show":
+        if args.type is None or args.id is None:
+            print("Error: Must provide a show type and ID.")
+            exit(1)
+        show(args.type, args.id, args.formalism)
+
+    # tag
+    elif args.command == "tag":
+        if args.type is None or args.id is None or args.tag is None:
+            print("Error: Must provide a tag type, ID, and tag name.")
+            exit(1)
+
+        if args.type == "collection":
+            api.tag_collection(args.id, args.tag)
+        elif args.type == "domain":
+            api.tag_domain(args.id, args.tag)
+        elif args.type == "problem":
+            api.tag_problem(args.id, args.tag)
+        else:
+            print("Error: Can only tag a collection, domain, or problem.")
+            exit(1)
+
+    # untag
+    elif args.command == "untag":
+        if args.type is None or args.id is None or args.tag is None:
+            print("Error: Must provide an untag type, ID, and tag name.")
+            exit(1)
+        if args.type == "collection":
+            api.untag_collection(args.id, args.tag)
+        elif args.type == "domain":
+            api.untag_domain(args.id, args.tag)
+        elif args.type == "problem":
+            api.untag_problem(args.id, args.tag)
+        else:
+            print("Error: Can only untag a collection, domain, or problem.")
+            exit(1)
+
+    else:
+        parser.print_help()
+        exit(0)
     print()
 
 
