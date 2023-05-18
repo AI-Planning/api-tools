@@ -1,4 +1,7 @@
+
 # Documents new collections *Formatted for incoming RDDL collections on 2023-03-29
+# https://github.com/ataitler/rddlrepository
+
 
 import os, sys, glob
 
@@ -12,8 +15,6 @@ def add_collection():
         return
     sys.path.append(collectionpath)
 
-    
-    from __init__ import info
     try:
         from __init__ import info
     except ImportError:
@@ -25,12 +26,12 @@ def add_collection():
     tags = info['tags']
     viz = info['viz']
 
-    instance_list = glob.glob(collectionpath + "\instance*")
+    instance_list = glob.glob(collectionpath + "/instance*")
     if len(instance_list) < 2:
         print("There needs to be more than 1 instance.rddl file")
         return
     # Make sure its greater than one for instance list as well
-    domain_file = glob.glob(collectionpath + "\domain*.rddl")
+    domain_file = glob.glob(collectionpath + "/domain*.rddl")
     if len(domain_file) > 1:
         print("There cannot be more than 1 domain file for RDDL collections")
         return
@@ -46,7 +47,7 @@ def add_collection():
     sys.path.append(parent_directory)
 
     import planning_domains_api as planning_api
-    planning_api.create_collection(name, description, tags, viz, ipc, formalism)
+    # planning_api.create_collection(name, description, tags, ipc, formalism)
 
 if __name__ == "__main__":
     """ Testing """

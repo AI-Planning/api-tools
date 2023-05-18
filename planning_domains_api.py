@@ -113,8 +113,6 @@ def change_tag(tag_type, iid, tid, formalism):
         print ("Result: %s" % str(res))
 
 def create_collection(name, description, tags, ipc, formalism):
-    attribute = ''  # Unknown for now
-    value = ''      # Same Unknown for now
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
