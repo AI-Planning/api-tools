@@ -1,9 +1,9 @@
 
-import http.client, urllib.parse, json, os, re
+import http.client, urllib.parse, json, os
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
-VERSION = '0.4'
+VERSION = '0.5'
 
 DOMAIN_PATH = False
 USER_EMAIL = False
@@ -325,6 +325,6 @@ if not checkForDomainPath():
 
 try:
     if VERSION != get_version():
-        print ("\n Warning: Script version doesn't match API. Do you have the latest version of this file?\n")
+        print (f"\n Warning: Script version ({VERSION}) doesn't match API ({get_version()}). Do you have the latest version of this file?\n")
 except:
     pass
