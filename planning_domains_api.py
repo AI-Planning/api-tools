@@ -27,7 +27,7 @@ def checkForDomainPath():
     if installationSettings is None:
         return False
 
-    domainPath = list(filter(lambda x: x.tag == 'domain_path', installationSettings))[0].text
+    domainPath = str(list(filter(lambda x: x.tag == 'domain_path', installationSettings))[0].text)
     if not os.path.isdir(domainPath):
         return False
 
@@ -58,7 +58,10 @@ def query(qs, formalism, qtype="GET", params={}, offline=False, format='/json'):
     if "<pre>Payload Too Large</pre>" in tmp:
         data = { "error": True, "message": "Payload too large."}
     else:
-        data = json.loads(tmp)
+        try:
+            data = json.loads(tmp)
+        except:
+            data = { "error": True, "message": f"Invalid JSON response:\n{tmp}"}
     conn.close()
 
     return data
@@ -177,7 +180,7 @@ def tag_collection(cid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagcollection", cid, tag2id[tagname])
+        change_tag("tagcollection", cid, tag2id[tagname], formalism)
 
 def untag_collection(cid, tagname, formalism):
     """Remove a given tag from a collection"""
@@ -185,7 +188,7 @@ def untag_collection(cid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagcollection", cid, tag2id[tagname])
+        change_tag("untagcollection", cid, tag2id[tagname], formalism)
 
 
 
@@ -201,9 +204,9 @@ def find_domains(name, formalism):
     """Return the domains matching the string name"""
     return simple_query("domains/search?domain_name=%s" % name, formalism)
 
-def update_domain_stat(did, attribute, value, description):
+def update_domain_stat(did, attribute, value, description, formalism):
     """Update the attribute stat with a given value and description"""
-    update_stat('domain', did, attribute, value, description)
+    update_stat('domain', did, attribute, value, description, formalism)
 
 def tag_domain(did, tagname, formalism):
     """Tag the domain with a given tag"""
@@ -211,7 +214,7 @@ def tag_domain(did, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagdomain", did, tag2id[tagname])
+        change_tag("tagdomain", did, tag2id[tagname], formalism)
 
 def untag_domain(did, tagname, formalism):
     """Remove a given tag from a domain"""
@@ -219,7 +222,7 @@ def untag_domain(did, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagdomain", did, tag2id[tagname])
+        change_tag("untagdomain", did, tag2id[tagname], formalism)
 
 
 def get_problems(did, formalism):
@@ -234,9 +237,9 @@ def find_problems(name, formalism):
     """Return the problems matching the string name"""
     return list(map(localize, simple_query("problems/search?problem_name=%s" % name, formalism)))
 
-def update_problem_stat(pid, attribute, value, description):
+def update_problem_stat(pid, attribute, value, description, formalism):
     """Update the attribute stat with a given value and description"""
-    update_stat('problem', pid, attribute, value, description)
+    update_stat('problem', pid, attribute, value, description, formalism)
 
 def get_null_attribute_problems(attribute, formalism):
     """Fetches all of the problems that do not have the attribute set yet"""
@@ -249,7 +252,7 @@ def tag_problem(pid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagproblem", pid, tag2id[tagname])
+        change_tag("tagproblem", pid, tag2id[tagname], formalism)
 
 def untag_problem(pid, tagname, formalism):
     """Remove a given tag from a problem"""
@@ -257,7 +260,7 @@ def untag_problem(pid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagproblem", pid, tag2id[tagname])
+        change_tag("untagproblem", pid, tag2id[tagname], formalism)
 
 def get_plan(pid, formalism):
     """Return the existing plan for a problem if it exists"""
@@ -299,7 +302,7 @@ def localize(prob):
     return toRet
 
 
-def generate_lab_suite(cid):
+def generate_lab_suite(cid, formalism):
     """Uses the lab API to generate a suite of problems in a collection"""
     try:
         from downward.suites import Problem
@@ -308,8 +311,8 @@ def generate_lab_suite(cid):
         return
 
     SUITE = []
-    for d in get_domains(cid):
-        for p in get_problems(d['domain_id']):
+    for d in get_domains(cid, formalism):
+        for p in get_problems(d['domain_id'], formalism):
             SUITE.append(Problem(p['domain'], p['problem'],
                                  domain_file = p['domain_path'],
                                  problem_file = p['problem_path'],

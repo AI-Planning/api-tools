@@ -190,12 +190,12 @@ def show(sub, arg, form):
 
     pprint.pprint(res, sort_dicts=False)
 
-def submit_plan(pid, pfile):
+def submit_plan(pid, pfile, formalism):
     with open(pfile) as f:
         plan = f.read()
-    api.submit_plan(pid, plan)
+    api.submit_plan(pid, plan, formalism)
 
-def cache(cid, outdir, include_data = False):
+def cache(cid, outdir, formalism, include_data = False):
 
     print("Caching collection %d to [%s] (data included = %s)..." % (cid, outdir, str(include_data)))
 
@@ -207,7 +207,7 @@ def cache(cid, outdir, include_data = False):
 
     domains = {}
     problem_data = {}
-    domain_data = api.get_domains(cid)
+    domain_data = api.get_domains(cid, formalism)
     domain_names = [dom['domain_name'] for dom in domain_data]
     assert len(set(domain_names)) == len(domain_names), "Error: It appears as though the collection has repeated domain names."
 
@@ -223,12 +223,12 @@ def cache(cid, outdir, include_data = False):
         os.mkdir(os.path.join(outdir, dname))
 
         # Turn the links into relative paths for this machine
-        probs = map(api.localize, api.get_problems(dom['domain_id']))
+        probs = [api.localize(p) for p in api.get_problems(dom['domain_id'], formalism)]
 
         # Copy the domain and problem files to their appropriate directory
         for i in range(len(probs)):
             dpath = os.path.join(dname, "domain_%.2d.pddl" % (i+1))
-            ppath = os.path.join(dname, "%.2d.pddl" % (i+1))
+            ppath = os.path.join(dname, "prob_%.2d.pddl" % (i+1))
 
             os.system("cp %s %s" % (probs[i]['domain_path'], os.path.join(outdir,dpath)))
             os.system("cp %s %s" % (probs[i]['problem_path'], os.path.join(outdir,ppath)))
@@ -322,11 +322,13 @@ if __name__ == "__main__":
     cache_parser = subparsers.add_parser("cache", help="Collect all of the domains in a collection into a specified folder.")
     cache_parser.add_argument("--id", type=int, help="Collection ID to cache.")
     cache_parser.add_argument("--folder", help="Folder to store the cached collection.")
+    add_formalism_argument(cache_parser)
 
     # Cache-all
     cache_all_parser = subparsers.add_parser("cache-all", help="Collect all domains in a collection into a specified folder, including problem data and statistics.")
     cache_all_parser.add_argument("--id", type=int, help="Collection ID to cache.")
     cache_all_parser.add_argument("--folder", help="Folder to store the cached collection and problem data/statistics.")
+    add_formalism_argument(cache_all_parser)
 
     args = parser.parse_args()
 
@@ -347,14 +349,14 @@ if __name__ == "__main__":
         if args.id is None or args.folder is None:
             print("Error: Must provide a collection ID and folder name.")
             exit(1)
-        cache(args.id, args.folder)
+        cache(args.id, args.folder, args.formalism)
 
     # cache-all
     elif args.command == "cache-all":
         if args.id is None or args.folder is None:
             print("Error: Must provide a collection ID and folder name.")
             exit(1)
-        cache(args.id, args.folder, True)
+        cache(args.id, args.folder, args.formalism, True)
 
 
     # register
@@ -366,7 +368,7 @@ if __name__ == "__main__":
         if args.id is None or args.plan is None:
             print("Error: Must provide a problem ID and plan file.")
             exit(1)
-        submit_plan(args.id, args.plan)
+        submit_plan(args.id, args.plan, args.formalism)
 
     # list
     elif args.command == "list":
@@ -375,12 +377,12 @@ if __name__ == "__main__":
             exit(1)
         if args.type == "tags":
             print("{0}\t{1}\n".format('Tag Name'.rjust(26), 'Description'))
-            tags = api.get_tags()
+            tags = api.get_tags(args.formalism)
             for t in sorted(tags.keys()):
                 print("{0}\t{1}".format(t.rjust(26), tags[t]))
             print()
         elif args.type == "collections":
-            cols = {c['collection_id']: c for c in api.get_collections()}
+            cols = {c['collection_id']: c for c in api.get_collections(args.formalism)}
             for cid in sorted(cols.keys()):
                 c = cols[cid]
                 print()
@@ -393,7 +395,7 @@ if __name__ == "__main__":
             if args.attribute is None:
                 print("Error: Must provide an attribute name.")
                 exit(1)
-            nullprobs = api.get_null_attribute_problems(args.attribute)
+            nullprobs = api.get_null_attribute_problems(args.attribute, args.formalism)
             if len(nullprobs) < 25:
                 pprint.pprint(nullprobs)
             else:
@@ -425,11 +427,11 @@ if __name__ == "__main__":
             exit(1)
 
         if args.type == "collection":
-            api.tag_collection(args.id, args.tag)
+            api.tag_collection(args.id, args.tag, args.formalism)
         elif args.type == "domain":
-            api.tag_domain(args.id, args.tag)
+            api.tag_domain(args.id, args.tag, args.formalism)
         elif args.type == "problem":
-            api.tag_problem(args.id, args.tag)
+            api.tag_problem(args.id, args.tag, args.formalism)
         else:
             print("Error: Can only tag a collection, domain, or problem.")
             exit(1)
@@ -440,11 +442,11 @@ if __name__ == "__main__":
             print("Error: Must provide an untag type, ID, and tag name.")
             exit(1)
         if args.type == "collection":
-            api.untag_collection(args.id, args.tag)
+            api.untag_collection(args.id, args.tag, args.formalism)
         elif args.type == "domain":
-            api.untag_domain(args.id, args.tag)
+            api.untag_domain(args.id, args.tag, args.formalism)
         elif args.type == "problem":
-            api.untag_problem(args.id, args.tag)
+            api.untag_problem(args.id, args.tag, args.formalism)
         else:
             print("Error: Can only untag a collection, domain, or problem.")
             exit(1)
