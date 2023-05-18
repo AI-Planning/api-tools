@@ -1,9 +1,9 @@
 
-import http.client, urllib.parse, json, os, re
+import http.client, urllib.parse, json, os
 import xml.etree.ElementTree as etree
 
 URL = 'api.planning.domains'
-VERSION = '0.4'
+VERSION = '0.5'
 
 DOMAIN_PATH = False
 USER_EMAIL = False
@@ -27,7 +27,7 @@ def checkForDomainPath():
     if installationSettings is None:
         return False
 
-    domainPath = list(filter(lambda x: x.tag == 'domain_path', installationSettings))[0].text
+    domainPath = str(list(filter(lambda x: x.tag == 'domain_path', installationSettings))[0].text)
     if not os.path.isdir(domainPath):
         return False
 
@@ -41,7 +41,7 @@ def checkForDomainPath():
         USER_TOKEN = list(filter(lambda x: x.tag == 'token', installationSettings))[0].text
     return True
 
-def query(qs, qtype="GET", params={}, offline=False, format='/json', formalism = "classical"):
+def query(qs, formalism, qtype="GET", params={}, offline=False, format='/json'):
 
     assert not offline, "Error: Offline mode is not supported currently."
 
@@ -49,26 +49,32 @@ def query(qs, qtype="GET", params={}, offline=False, format='/json', formalism =
 
     params = urllib.parse.urlencode(params)
     conn = http.client.HTTPSConnection(URL)
-    conn.request(qtype, format+"/"+formalism+qs, params, headers)
+    if formalism == "":
+        conn.request(qtype, f"{format}/{qs}", params, headers)
+    else:
+        conn.request(qtype, f"{format}/{formalism}/{qs}", params, headers)
     response = conn.getresponse()
     tmp = response.read().decode('utf-8')
     if "<pre>Payload Too Large</pre>" in tmp:
         data = { "error": True, "message": "Payload too large."}
     else:
-        data = json.loads(tmp)
+        try:
+            data = json.loads(tmp)
+        except:
+            data = { "error": True, "message": f"Invalid JSON response:\n{tmp}"}
     conn.close()
 
     return data
 
-def simple_query(qs, form):
-    res = query(qs, formalism=form)
+def simple_query(qs, formalism):
+    res = query(qs, formalism)
     if res['error']:
         print ("Error: %s" % res['message'])
         return []
     else:
         return res['result']
 
-def update_stat(stat_type, iid, attribute, value, description, form):
+def update_stat(stat_type, iid, attribute, value, description, formalism):
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
@@ -76,54 +82,54 @@ def update_stat(stat_type, iid, attribute, value, description, form):
               'value': value,
               'desc': description}
 
-    res = query("/update%s/%d" % (stat_type, iid),
+    res = query("update%s/%d" % (stat_type, iid),
+                formalism,
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='',
-                formalism = form)
+                format='')
 
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
         print ("Result: %s" % str(res))
 
-def change_tag(tag_type, iid, tid, form):
+def change_tag(tag_type, iid, tid, formalism):
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
               'tag_id': tid}
 
-    res = query("/%s/%d" % (tag_type, iid),
+    res = query("%s/%d" % (tag_type, iid),
+                formalism,
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='',
-                formalism = form)
+                format='')
 
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
         print ("Result: %s" % str(res))
 
-def create_collection(name, description, tags, ipc, form):
+def create_collection(name, description, tags, ipc, formalism):
     attribute = ''  # Unknown for now
     value = ''      # Same Unknown for now
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
-              'formalism': form,
+              'formalism': formalism,
               'name': name,
               'ipc': ipc,
               'desc': description,
               'tags': tags,
     }
-    path = "/{}/collection".format(form)
+    path = f"{formalism}/collection"
     res = query(path,
+          formalism,
           qtype='POST',
           params = params,
-          offline=False,
-          formalism = form
+          offline=False
           )
 
     if res['error']:
@@ -136,17 +142,17 @@ def create_collection(name, description, tags, ipc, form):
 
 def get_version():
     """Return the current API version"""
-    return str(query('/version')['version'], formalism = "")
+    return str(query('version', "")['version'])
 
 
-def get_tags(form):
+def get_tags(formalism):
     """Get the list of available tags"""
-    return {t['name']: t['description'] for t in simple_query("/tags", formalism = form)}
+    return {t['name']: t['description'] for t in simple_query("tags", formalism)}
 
 
-def get_collections(form, ipc = None):
+def get_collections(formalism, ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
-    res = query('/collections/', formalism=form)
+    res = query('collections/', formalism)
     if res['error']:
         print ("Error: %s" % res['message'])
         return []
@@ -156,125 +162,125 @@ def get_collections(form, ipc = None):
         else:
             return res['result']
 
-def get_collection(cid, form):
+def get_collection(cid, formalism):
     """Return the collection of a given id"""
-    return simple_query("/collection/%d" % cid, form)
+    return simple_query("collection/%d" % cid, formalism)
 
-def find_collections(name, form):
+def find_collections(name, formalism):
     """Find the collections matching the string name"""
-    return simple_query("/collections/search?collection_name=%s" % name, form)
+    return simple_query("collections/search?collection_name=%s" % name, formalism)
 
-def update_collection_stat(cid, attribute, value, description, form):
+def update_collection_stat(cid, attribute, value, description, formalism):
     """Update the attribute stat with a given value and description"""
-    update_stat('collection', cid, attribute, value, description, formalism = form)
+    update_stat('collection', cid, attribute, value, description, formalism)
 
-def tag_collection(cid, tagname, form):
+def tag_collection(cid, tagname, formalism):
     """Tag the collection with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
+    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagcollection", cid, tag2id[tagname])
+        change_tag("tagcollection", cid, tag2id[tagname], formalism)
 
-def untag_collection(cid, tagname, form):
+def untag_collection(cid, tagname, formalism):
     """Remove a given tag from a collection"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
+    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagcollection", cid, tag2id[tagname])
+        change_tag("untagcollection", cid, tag2id[tagname], formalism)
 
 
 
-def get_domains(cid, form):
+def get_domains(cid, formalism):
     """Return the set of domains for a given collection id"""
-    return simple_query("/domains/%d" % cid, formalism = form)
+    return simple_query("domains/%d" % cid, formalism)
 
-def get_domain(did, form):
+def get_domain(did, formalism):
     """Return the domain for a given domain id"""
-    return simple_query("/domain/%d" % did, formalism = form)
+    return simple_query("domain/%d" % did, formalism)
 
-def find_domains(name, form):
+def find_domains(name, formalism):
     """Return the domains matching the string name"""
-    return simple_query("/domains/search?domain_name=%s" % name, form)
+    return simple_query("domains/search?domain_name=%s" % name, formalism)
 
-def update_domain_stat(did, attribute, value, description):
+def update_domain_stat(did, attribute, value, description, formalism):
     """Update the attribute stat with a given value and description"""
-    update_stat('domain', did, attribute, value, description)
+    update_stat('domain', did, attribute, value, description, formalism)
 
-def tag_domain(did, tagname, form):
+def tag_domain(did, tagname, formalism):
     """Tag the domain with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
+    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagdomain", did, tag2id[tagname])
+        change_tag("tagdomain", did, tag2id[tagname], formalism)
 
-def untag_domain(did, tagname, form):
+def untag_domain(did, tagname, formalism):
     """Remove a given tag from a domain"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags", form)}
+    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagdomain", did, tag2id[tagname])
+        change_tag("untagdomain", did, tag2id[tagname], formalism)
 
 
-def get_problems(did, form):
+def get_problems(did, formalism):
     """Return the set of problems for a given domain id"""
-    return map(localize, simple_query("/problems/%d" % did, formalism = form))
+    return map(localize, simple_query("problems/%d" % did, formalism))
 
-def get_problem(pid, form):
+def get_problem(pid, formalism):
     """Return the problem for a given problem id"""
-    return localize(simple_query("/problem/%d" % pid, formalism = form))
+    return localize(simple_query("problem/%d" % pid, formalism))
 
-def find_problems(name, form):
+def find_problems(name, formalism):
     """Return the problems matching the string name"""
-    return list(map(localize, simple_query("/problems/search?problem_name=%s" % name, formalism = form)))
+    return list(map(localize, simple_query("problems/search?problem_name=%s" % name, formalism)))
 
-def update_problem_stat(pid, attribute, value, description):
+def update_problem_stat(pid, attribute, value, description, formalism):
     """Update the attribute stat with a given value and description"""
-    update_stat('problem', pid, attribute, value, description)
+    update_stat('problem', pid, attribute, value, description, formalism)
 
-def get_null_attribute_problems(attribute, form):
+def get_null_attribute_problems(attribute, formalism):
     """Fetches all of the problems that do not have the attribute set yet"""
     return {i['id']: (i['domain_path'], i['problem_path'])
-            for i in map(localize, simple_query("/nullattribute/%s" % attribute, formalism = form))}
+            for i in map(localize, simple_query("nullattribute/%s" % attribute, formalism))}
 
-def tag_problem(pid, tagname, form):
+def tag_problem(pid, tagname, formalism):
     """Tag the problem with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
+    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagproblem", pid, tag2id[tagname])
+        change_tag("tagproblem", pid, tag2id[tagname], formalism)
 
-def untag_problem(pid, tagname, form):
+def untag_problem(pid, tagname, formalism):
     """Remove a given tag from a problem"""
-    tag2id = {t['name']: t['id'] for t in simple_query("/tags", formalism = form)}
+    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagproblem", pid, tag2id[tagname])
+        change_tag("untagproblem", pid, tag2id[tagname], formalism)
 
-def get_plan(pid, form):
+def get_plan(pid, formalism):
     """Return the existing plan for a problem if it exists"""
-    res = simple_query("/plan/%d" % pid, formalism = form) 
+    res = simple_query("plan/%d" % pid, formalism)
     if res:
         return res['plan'].strip()
     return res
 
 
-def submit_plan(pid, plan, form):
+def submit_plan(pid, plan, formalism):
     """Submit the provided plan for validation and possible storage"""
 
     params = {'plan': plan, 'email': USER_EMAIL}
 
-    res = query("/submitplan/%d" % pid,
+    res = query("submitplan/%d" % pid,
+                formalism,
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='',
-                formalism = form)
+                format='')
     if res['error']:
         print ("Error: %s" % res['message'])
     else:
@@ -296,7 +302,7 @@ def localize(prob):
     return toRet
 
 
-def generate_lab_suite(cid):
+def generate_lab_suite(cid, formalism):
     """Uses the lab API to generate a suite of problems in a collection"""
     try:
         from downward.suites import Problem
@@ -305,8 +311,8 @@ def generate_lab_suite(cid):
         return
 
     SUITE = []
-    for d in get_domains(cid):
-        for p in get_problems(d['domain_id']):
+    for d in get_domains(cid, formalism):
+        for p in get_problems(d['domain_id'], formalism):
             SUITE.append(Problem(p['domain'], p['problem'],
                                  domain_file = p['domain_path'],
                                  problem_file = p['problem_path'],
@@ -319,6 +325,6 @@ if not checkForDomainPath():
 
 try:
     if VERSION != get_version():
-        print ("\n Warning: Script version doesn't match API. Do you have the latest version of this file?\n")
+        print (f"\n Warning: Script version ({VERSION}) doesn't match API ({get_version()}). Do you have the latest version of this file?\n")
 except:
     pass
