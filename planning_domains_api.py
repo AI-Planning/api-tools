@@ -194,7 +194,7 @@ def update_collection_stat(cid, attribute, value, description, formalism):
 
 def tag_collection(cid, tagname, formalism):
     """Tag the collection with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
+    tag2id = {t['tag_name']: t['tag_id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
@@ -202,7 +202,7 @@ def tag_collection(cid, tagname, formalism):
 
 def untag_collection(cid, tagname, formalism):
     """Remove a given tag from a collection"""
-    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
+    tag2id = {t['tag_name']: t['tag_id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
@@ -228,7 +228,7 @@ def update_domain_stat(did, attribute, value, description, formalism):
 
 def tag_domain(did, tagname, formalism):
     """Tag the domain with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
+    tag2id = {t['tag_name']: t['tag_id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
@@ -236,7 +236,7 @@ def tag_domain(did, tagname, formalism):
 
 def untag_domain(did, tagname, formalism):
     """Remove a given tag from a domain"""
-    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
+    tag2id = {t['tag_name']: t['tag_id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
@@ -266,7 +266,7 @@ def get_null_attribute_problems(attribute, formalism):
 
 def tag_problem(pid, tagname, formalism):
     """Tag the problem with a given tag"""
-    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
+    tag2id = {t['tag_name']: t['tag_id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
@@ -274,7 +274,7 @@ def tag_problem(pid, tagname, formalism):
 
 def untag_problem(pid, tagname, formalism):
     """Remove a given tag from a problem"""
-    tag2id = {t['name']: t['id'] for t in simple_query("tags", formalism)}
+    tag2id = {t['tag_name']: t['tag_id'] for t in simple_query("tags", formalism)}
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
