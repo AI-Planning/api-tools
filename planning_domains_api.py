@@ -165,12 +165,12 @@ def get_tag(tid, formalism):
 
 def get_tags(formalism):
     """Get the list of available tags"""
-    return {t['name']: t['description'] for t in simple_query("tags", formalism)}
+    return {t['tag_name']: t['description'] for t in simple_query("tags", formalism)}
 
 
 def get_collections(formalism, ipc = None):
     """Return the collections, optionally which are IPC or non-IPC"""
-    res = query('collections/', formalism)
+    res = query('collections', formalism)
     if res['error']:
         print ("Error: %s" % res['message'])
         return []
@@ -261,7 +261,7 @@ def update_problem_stat(pid, attribute, value, description, formalism):
 
 def get_null_attribute_problems(attribute, formalism):
     """Fetches all of the problems that do not have the attribute set yet"""
-    return {i['id']: (i['domain_path'], i['problem_path'])
+    return {i['problem_id']: (i['domain_path'], i['problem_path'])
             for i in map(localize, simple_query("nullattribute/%s" % attribute, formalism))}
 
 def tag_problem(pid, tagname, formalism):
