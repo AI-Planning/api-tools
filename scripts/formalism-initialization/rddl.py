@@ -5,6 +5,11 @@
 
 import os, sys, glob
 
+current = os.path.dirname(os.path.realpath(__file__))
+parent_directory = os.path.dirname(os.path.dirname(current))
+sys.path.append(parent_directory)
+import planning_domains_api as planning_api
+
 import importlib.util
 
 def add_IPPC_instances(rootdir):
@@ -18,12 +23,18 @@ def add_IPPC_instances(rootdir):
         # Get the domain folders
         domain_folders = glob.glob(f"{rootdir}/{ippc_name}/*/")
 
-        # Assert each domain folder has MDP and POMDP folders
-        for domain_folder in domain_folders:
-            assert os.path.isdir(f"{domain_folder}MDP/"), f"{domain_folder} does not have MDP folder"
-            assert os.path.isdir(f"{domain_folder}POMDP/"), f"{domain_folder} does not have POMDP folder"
+        for style in ['MDP', 'POMDP']:
 
-            for style in ['MDP', 'POMDP']:
+            name = f"{ippc_name}-{style}"
+            description = f"{ippc_name} {style} instances"
+            tags = [ippc_name.lower(), style.lower()]
+            planning_api.create_collection(name, description, tags, True, "rddl")
+
+            # Assert each domain folder has MDP and POMDP folders
+            for domain_folder in domain_folders:
+                assert os.path.isdir(f"{domain_folder}MDP/"), f"{domain_folder} does not have MDP folder"
+                assert os.path.isdir(f"{domain_folder}POMDP/"), f"{domain_folder} does not have POMDP folder"
+
                 # folder with the instances
                 instance_folder = f"{domain_folder}{style}/"
 
@@ -68,16 +79,16 @@ add_IPPC_instances(topdir)
 
 exit(0)
 
-    name = info['name']
-    description = info['description']
-    ipc = info['context']
-    tags = info['tags']
-    viz = info['viz']
+    # name = info['name']
+    # description = info['description']
+    # ipc = info['context']
+    # tags = info['tags']
+    # viz = info['viz']
 
-    # Call planning_domains_api.py function
-    current = os.path.dirname(os.path.realpath(__file__))
-    parent_directory = os.path.dirname(current)
-    sys.path.append(parent_directory)
+    # # Call planning_domains_api.py function
+    # current = os.path.dirname(os.path.realpath(__file__))
+    # parent_directory = os.path.dirname(current)
+    # sys.path.append(parent_directory)
 
-    import planning_domains_api as planning_api
-    planning_api.create_collection(name, description, tags, ipc, formalism)
+    # import planning_domains_api as planning_api
+    # planning_api.create_collection(name, description, tags, ipc, formalism)

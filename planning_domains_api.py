@@ -2,8 +2,10 @@
 import http.client, urllib.parse, json, os
 import xml.etree.ElementTree as etree
 
-URL = 'api.planning.domains'
-VERSION = '0.5'
+# URL = 'api.planning.domains'
+# URL = 'planning-domains-api-v2.herokuapp.com'
+URL = '0.0.0.0:5000'
+VERSION = '1.0'
 
 DOMAIN_PATH = False
 USER_EMAIL = False
@@ -41,14 +43,21 @@ def checkForDomainPath():
         USER_TOKEN = list(filter(lambda x: x.tag == 'token', installationSettings))[0].text
     return True
 
-def query(qs, formalism, qtype="GET", params={}, offline=False, format='/json'):
+def query(qs, formalism, qtype="GET", params={}, offline=False, format='/json', json_params=False):
 
     assert not offline, "Error: Offline mode is not supported currently."
 
-    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+    if json_params:
+        headers = {"Content-type": "application/json", "Accept": "text/plain"}
+        params = json.dumps(params)
+    else:
+        headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+        params = urllib.parse.urlencode(params)
 
-    params = urllib.parse.urlencode(params)
-    conn = http.client.HTTPSConnection(URL)
+    # conn = http.client.HTTPSConnection(URL)
+    conn = http.client.HTTPConnection(URL)
+
+
     if formalism == "":
         conn.request(qtype, f"{format}/{qs}", params, headers)
     else:
@@ -94,18 +103,20 @@ def update_stat(stat_type, iid, attribute, value, description, formalism):
     else:
         print ("Result: %s" % str(res))
 
-def change_tag(tag_type, iid, tid, formalism):
+def change_tag(change_type, object_type, iid, tid, formalism):
 
     params = {'user': USER_EMAIL,
               'password': USER_TOKEN,
-              'tag_id': tid}
+              'type': object_type,
+              'tagid': tid,
+              'objectid': iid}
 
-    res = query("%s/%d" % (tag_type, iid),
+    res = query(f"tags/{change_type}",
                 formalism,
                 qtype='POST',
                 params=params,
                 offline=False,
-                format='')
+                json_params=True)
 
     if res['error']:
         print ("Error: %s" % res['message'])
@@ -122,7 +133,11 @@ def create_collection(name, description, tags, ipc, formalism):
               'desc': description,
               'tags': tags,
     }
-    path = f"{formalism}/collection"
+
+    import pprint
+    pprint.pprint(params)
+
+    path = f"collection"
     res = query(path,
           formalism,
           qtype='POST',
@@ -178,7 +193,7 @@ def tag_collection(cid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagcollection", cid, tag2id[tagname], formalism)
+        change_tag('apply', 'collection', cid, tag2id[tagname], formalism)
 
 def untag_collection(cid, tagname, formalism):
     """Remove a given tag from a collection"""
@@ -186,7 +201,7 @@ def untag_collection(cid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagcollection", cid, tag2id[tagname], formalism)
+        change_tag('remove', 'collection', cid, tag2id[tagname], formalism)
 
 
 
@@ -212,7 +227,7 @@ def tag_domain(did, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagdomain", did, tag2id[tagname], formalism)
+        change_tag("apply", "domain", did, tag2id[tagname], formalism)
 
 def untag_domain(did, tagname, formalism):
     """Remove a given tag from a domain"""
@@ -220,7 +235,7 @@ def untag_domain(did, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagdomain", did, tag2id[tagname], formalism)
+        change_tag("remove", "domain", did, tag2id[tagname], formalism)
 
 
 def get_problems(did, formalism):
@@ -250,7 +265,7 @@ def tag_problem(pid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("tagproblem", pid, tag2id[tagname], formalism)
+        change_tag("apply", "problem", pid, tag2id[tagname], formalism)
 
 def untag_problem(pid, tagname, formalism):
     """Remove a given tag from a problem"""
@@ -258,7 +273,7 @@ def untag_problem(pid, tagname, formalism):
     if tagname not in tag2id:
         print ("Error: Tag %s does not exist" % tagname)
     else:
-        change_tag("untagproblem", pid, tag2id[tagname], formalism)
+        change_tag("remove", "problem", pid, tag2id[tagname], formalism)
 
 def get_plan(pid, formalism):
     """Return the existing plan for a problem if it exists"""
