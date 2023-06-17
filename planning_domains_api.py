@@ -158,6 +158,11 @@ def get_version():
     return str(query('version', "")['version'])
 
 
+def get_tag(tid, formalism):
+    """Return the tag of a given id"""
+    return simple_query("tag/%d" % tid, formalism)
+
+
 def get_tags(formalism):
     """Get the list of available tags"""
     return {t['name']: t['description'] for t in simple_query("tags", formalism)}

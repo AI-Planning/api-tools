@@ -184,6 +184,8 @@ def show(sub, arg, form):
         res = api.get_domain(arg, form)
     elif sub == 'problem':
         res = api.get_problem(arg, form)
+    elif sub == 'tag':
+        res = api.get_tag(arg, form)
     else:
         print("Error: Unrecognized sub-command, {0}".format(sub))
         exit(1)
@@ -287,8 +289,8 @@ if __name__ == "__main__":
     add_formalism_argument(find_parser)
 
     # Show
-    show_parser = subparsers.add_parser("show", help="Find and show collections, domains, problems, or plans with a specific ID.")
-    show_parser.add_argument("--type", choices=["collection", "domain", "problem", "plan"], help="Type of item to show.")
+    show_parser = subparsers.add_parser("show", help="Find and show collections, domains, problems, plans, or tags with a specific ID.")
+    show_parser.add_argument("--type", choices=["collection", "domain", "problem", "plan", "tag"], help="Type of item to show.")
     show_parser.add_argument("--id", type=int, help="ID of the item to show.")
     add_formalism_argument(show_parser)
 
